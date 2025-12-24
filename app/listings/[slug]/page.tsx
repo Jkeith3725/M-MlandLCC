@@ -1,73 +1,23 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { PhotoGallery } from '@/components/listings/PhotoGallery';
 import { ListingCard } from '@/components/listings/ListingCard';
-import { ContactModal } from '@/components/forms/ContactModal';
-import { SellLandModal } from '@/components/forms/SellLandModal';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Skeleton } from '@/components/ui/SkeletonLoader';
 import { getListingBySlug, getSimilarListings } from '@/lib/api';
-import { Listing } from '@/lib/types';
+import { MOCK_LISTINGS } from '@/lib/mockData';
 import { formatPrice, formatAcreage } from '@/lib/utils';
 import { COMPANY_INFO } from '@/lib/constants';
 
-export default function ListingDetailPage() {
-  const params = useParams();
-  const slug = params.slug as string;
+export async function generateStaticParams() {
+  return MOCK_LISTINGS.map((listing) => ({
+    slug: listing.slug,
+  }));
+}
 
-  const [listing, setListing] = useState<Listing | null>(null);
-  const [similarListings, setSimilarListings] = useState<Listing[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [isSellModalOpen, setIsSellModalOpen] = useState(false);
-
-  useEffect(() => {
-    async function loadListing() {
-      setIsLoading(true);
-      const data = await getListingBySlug(slug);
-      setListing(data);
-
-      if (data) {
-        const similar = await getSimilarListings(data, 4);
-        setSimilarListings(similar);
-      }
-
-      setIsLoading(false);
-    }
-
-    loadListing();
-  }, [slug]);
-
-  if (isLoading) {
-    return (
-      <>
-        <Navbar />
-        <main className="pt-24 pb-20">
-          <div className="max-w-8xl mx-auto px-6 lg:px-12">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-              <div className="lg:col-span-2 space-y-8">
-                <Skeleton className="w-full aspect-[16/10]" />
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
-                </div>
-              </div>
-              <div>
-                <Skeleton className="w-full h-64" />
-              </div>
-            </div>
-          </div>
-        </main>
-      </>
-    );
-  }
+export default async function ListingDetailPage({ params }: { params: { slug: string } }) {
+  const listing = await getListingBySlug(params.slug);
 
   if (!listing) {
     return (
@@ -77,15 +27,17 @@ export default function ListingDetailPage() {
           <div className="max-w-8xl mx-auto px-6 lg:px-12 text-center py-20">
             <h1 className="text-4xl font-serif font-bold text-brown-dark mb-4">Listing Not Found</h1>
             <p className="text-gray-700 mb-8">The property you&apos;re looking for doesn&apos;t exist or has been sold.</p>
-            <Button variant="primary" onClick={() => window.location.href = '/listings'}>
-              View All Listings
-            </Button>
+            <a href="/listings">
+              <Button variant="primary">View All Listings</Button>
+            </a>
           </div>
         </main>
-        <Footer onContactClick={() => {}} onSellClick={() => {}} />
+        <Footer />
       </>
     );
   }
+
+  const similarListings = await getSimilarListings(listing, 4);
 
   return (
     <>
@@ -224,13 +176,14 @@ export default function ListingDetailPage() {
                     Interested in this property?
                   </h3>
 
-                  <Button
-                    variant="primary"
-                    onClick={() => setIsContactModalOpen(true)}
-                    className="w-full mb-4"
-                  >
-                    Request Information
-                  </Button>
+                  <a href={`mailto:${COMPANY_INFO.email}?subject=Inquiry about ${listing.title}`}>
+                    <Button
+                      variant="primary"
+                      className="w-full mb-4"
+                    >
+                      Request Information
+                    </Button>
+                  </a>
 
                   <div className="border-t border-cream-dark pt-4 space-y-3">
                     <div className="flex items-center gap-3 text-gray-700">
@@ -269,21 +222,7 @@ export default function ListingDetailPage() {
         </div>
       </main>
 
-      <Footer
-        onContactClick={() => setIsContactModalOpen(true)}
-        onSellClick={() => setIsSellModalOpen(true)}
-      />
-
-      <ContactModal
-        isOpen={isContactModalOpen}
-        onClose={() => setIsContactModalOpen(false)}
-        listingTitle={listing.title}
-      />
-
-      <SellLandModal
-        isOpen={isSellModalOpen}
-        onClose={() => setIsSellModalOpen(false)}
-      />
+      <Footer />
     </>
   );
 }

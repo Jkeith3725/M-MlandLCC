@@ -1,11 +1,11 @@
 import Link from 'next/link';
 
 interface FooterProps {
-  onContactClick: () => void;
-  onSellClick: () => void;
+  onContactClick?: () => void;
+  onSellClick?: () => void;
 }
 
-export function Footer({ onContactClick, onSellClick }: FooterProps) {
+export function Footer({ onContactClick, onSellClick }: FooterProps = {}) {
   const currentYear = new Date().getFullYear();
 
   return (
