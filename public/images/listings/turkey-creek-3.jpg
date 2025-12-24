@@ -1,0 +1,22 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="forestBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8cc08c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d6b2d;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#forestBg)"/>
+  <path d="M0,500 Q200,480 400,490 T800,500 L800,600 L0,600 Z" fill="#1f4a1f"/>
+  <g opacity="0.5">
+    <polygon points="200,400 170,460 230,460" fill="#163416"/>
+    <rect x="195" y="460" width="10" height="40" fill="#663300"/>
+  </g>
+  <g opacity="0.5">
+    <polygon points="350,380 315,450 385,450" fill="#163416"/>
+    <rect x="345" y="450" width="10" height="50" fill="#663300"/>
+  </g>
+  <g opacity="0.5">
+    <polygon points="550,390 520,455 580,455" fill="#163416"/>
+    <rect x="545" y="455" width="10" height="45" fill="#663300"/>
+  </g>
+</svg>

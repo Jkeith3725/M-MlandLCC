@@ -1,0 +1,7 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#66ab66"/>
+  <path d="M0,450 Q200,430 400,440 T800,450 L800,600 L0,600 Z" fill="#2d6b2d"/>
+  <path d="M100,500 Q200,480 300,490 Q400,500 500,485 Q600,470 700,480" stroke="#4682B4" stroke-width="20" fill="none" opacity="0.7"/>
+  <ellipse cx="400" cy="490" rx="300" ry="20" fill="#4682B4" opacity="0.4"/>
+  <text x="400" y="580" font-family="Arial" font-size="20" fill="#fff" text-anchor="middle">Creek Hollow Tract</text>
+</svg>
