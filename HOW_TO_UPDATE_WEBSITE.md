@@ -57,6 +57,57 @@ This guide will show you how to update property listings on your website. It's e
 
 ---
 
+## How to Upload Property Photos to Google Drive
+
+**Good news!** You can upload images to Google Drive and just paste the link into your Google Sheet. The website automatically converts it to work properly!
+
+### Step-by-Step Photo Upload:
+
+1. **Go to Your Google Drive**
+   - Visit https://drive.google.com
+   - Create a folder called "Property Images" (optional, but keeps things organized)
+
+2. **Upload Your Photo**
+   - Click the **"+ New"** button (top left)
+   - Click **"File upload"**
+   - Choose the property photo from your computer
+   - Wait for it to upload
+
+3. **Get the Shareable Link**
+   - **Right-click** on the uploaded photo
+   - Click **"Get link"** or **"Share"**
+   - Change sharing to **"Anyone with the link"**
+   - Make sure it says **"Viewer"** (not Editor)
+   - Click **"Copy link"**
+
+4. **Paste Into Google Sheet**
+   - Go to your property Google Sheet
+   - Find the property row
+   - Paste the link in the **"Thumbnail Image"** column (column I)
+   - For additional photos, paste multiple links in the **"Additional Photos"** column (column J), separated by commas
+
+5. **Done!**
+   - The website will automatically convert your Google Drive link to work as an image
+   - No extra steps needed!
+
+### Example Google Drive Link:
+When you copy the link, it looks like this:
+```
+https://drive.google.com/file/d/1ABC123XYZ456/view?usp=sharing
+```
+
+Just paste it directly into your Google Sheet - the website handles the rest!
+
+### For Multiple Photos:
+If a property has multiple photos, paste them separated by commas in the "Additional Photos" column:
+```
+https://drive.google.com/file/d/PHOTO1/view, https://drive.google.com/file/d/PHOTO2/view, https://drive.google.com/file/d/PHOTO3/view
+```
+
+**Important:** Make sure all Google Drive photos are set to "Anyone with the link can view" or visitors won't be able to see them!
+
+---
+
 ## Step 2: Update Your Website
 
 After you've made changes to your Google Sheet, follow these steps to update your website:
@@ -124,11 +175,17 @@ If you want the website to update immediately:
 - Use all lowercase letters
 
 ### "Where do I get image URLs?"
-For now, images are stored in your website files at `/public/images/listings/`
+**Easy! Upload photos to Google Drive and paste the link!**
 
-To add new images, you'll need help from someone who can:
-- Add the image to the `/public/images/listings/` folder
-- OR upload images to Google Drive and get shareable links
+See the "How to Upload Property Photos to Google Drive" section above for step-by-step instructions.
+
+You can also still use images stored in your website files at `/public/images/listings/` by typing paths like `/images/listings/property-photo.jpg`
+
+### "The property image isn't showing on the website"
+- Make sure the Google Drive photo is set to "Anyone with the link can view"
+- Check that you pasted the full Google Drive link (should start with `https://drive.google.com/`)
+- The website automatically converts Google Drive links - just paste them as-is!
+- Wait a few minutes after updating for the website to rebuild
 
 ---
 
