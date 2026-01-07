@@ -1,8 +1,12 @@
 import { Listing, FilterParams, PaginatedListings } from './types';
 import { MOCK_LISTINGS } from './mockData';
+import { fetchListingsFromSheet } from './googleSheets';
 import { delay } from './utils';
 
 const PAGE_SIZE = 9;
+
+// Toggle to switch between Google Sheets and mock data
+const USE_GOOGLE_SHEETS = true;
 
 export async function getListings(
   filters: FilterParams = {},
@@ -11,7 +15,12 @@ export async function getListings(
   // Simulate network delay
   await delay(Math.random() * 300 + 300);
 
-  let filtered = [...MOCK_LISTINGS];
+  // Fetch from Google Sheets or use mock data
+  const allListings = USE_GOOGLE_SHEETS
+    ? await fetchListingsFromSheet()
+    : MOCK_LISTINGS;
+
+  let filtered = [...allListings];
 
   // Apply filters
   if (filters.county) {
@@ -75,15 +84,25 @@ export async function getListingBySlug(slug: string): Promise<Listing | null> {
   // Simulate network delay
   await delay(Math.random() * 200 + 200);
 
-  return MOCK_LISTINGS.find(listing => listing.slug === slug) || null;
+  // Fetch from Google Sheets or use mock data
+  const allListings = USE_GOOGLE_SHEETS
+    ? await fetchListingsFromSheet()
+    : MOCK_LISTINGS;
+
+  return allListings.find(listing => listing.slug === slug) || null;
 }
 
 export async function getFeaturedListings(count: number = 6): Promise<Listing[]> {
   // Simulate network delay
   await delay(Math.random() * 200 + 200);
 
+  // Fetch from Google Sheets or use mock data
+  const allListings = USE_GOOGLE_SHEETS
+    ? await fetchListingsFromSheet()
+    : MOCK_LISTINGS;
+
   // Return newest listings as featured
-  const sorted = [...MOCK_LISTINGS].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  const sorted = [...allListings].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   return sorted.slice(0, count);
 }
 
@@ -91,8 +110,13 @@ export async function getSimilarListings(currentListing: Listing, count: number 
   // Simulate network delay
   await delay(Math.random() * 200 + 200);
 
+  // Fetch from Google Sheets or use mock data
+  const allListings = USE_GOOGLE_SHEETS
+    ? await fetchListingsFromSheet()
+    : MOCK_LISTINGS;
+
   // Find similar listings based on county and price range
-  const similar = MOCK_LISTINGS.filter(listing => {
+  const similar = allListings.filter(listing => {
     if (listing.id === currentListing.id) return false;
 
     const sameState = listing.state === currentListing.state;
