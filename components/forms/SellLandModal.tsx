@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { useToast } from '@/hooks/useToast';
 import { ALL_COUNTIES, STATES } from '@/lib/constants';
 import { SellLandFormData } from '@/lib/types';
+import { submitSellLandForm } from '@/lib/formSubmission';
 
 interface SellLandModalProps {
   isOpen: boolean;
@@ -33,23 +34,43 @@ export function SellLandModal({ isOpen, onClose }: SellLandModalProps) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Submit to Google Sheets via Google Apps Script
+      const result = await submitSellLandForm({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        state: formData.state,
+        county: formData.county,
+        acreage: formData.acreage,
+        askingPrice: formData.askingPrice,
+        timeline: formData.timeline,
+        message: formData.message,
+      });
 
-    showToast('Thank you! We will review your property and contact you soon.', 'success');
-    setIsSubmitting(false);
-    onClose();
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      county: undefined,
-      state: undefined,
-      acreage: undefined,
-      askingPrice: undefined,
-      timeline: undefined,
-      message: undefined,
-    });
+      if (result.success) {
+        showToast('Thank you! We will review your property and contact you soon.', 'success');
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          county: undefined,
+          state: undefined,
+          acreage: undefined,
+          askingPrice: undefined,
+          timeline: undefined,
+          message: undefined,
+        });
+        onClose();
+      } else {
+        showToast(result.error || 'Failed to submit property. Please try again.', 'error');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      showToast('An error occurred. Please try again later.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (field: keyof SellLandFormData, value: string | number | undefined) => {
