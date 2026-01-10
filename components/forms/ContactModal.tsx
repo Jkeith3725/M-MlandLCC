@@ -5,6 +5,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/hooks/useToast';
+import { submitContactForm } from '@/lib/formSubmission';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -26,13 +27,29 @@ export function ContactModal({ isOpen, onClose, listingTitle }: ContactModalProp
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Submit to Google Sheets via Google Apps Script
+      const result = await submitContactForm({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+        listingTitle,
+      });
 
-    showToast('Message sent successfully! We will contact you soon.', 'success');
-    setIsSubmitting(false);
-    onClose();
-    setFormData({ name: '', email: '', phone: '', message: '' });
+      if (result.success) {
+        showToast('Message sent successfully! We will contact you soon.', 'success');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+        onClose();
+      } else {
+        showToast(result.error || 'Failed to send message. Please try again.', 'error');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      showToast('An error occurred. Please try again later.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (field: string, value: string) => {

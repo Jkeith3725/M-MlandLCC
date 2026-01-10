@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
+  schedule:
+    - cron: '0 2 * * *'  # Runs daily at 2 AM UTC (9 PM EST)
 
 permissions:
   contents: read
@@ -31,6 +34,8 @@ jobs:
         run: npm ci
 
       - name: Build with Next.js
+        env:
+          NEXT_PUBLIC_USE_GOOGLE_SHEETS: true
         run: npm run build
 
       - name: Upload artifact
