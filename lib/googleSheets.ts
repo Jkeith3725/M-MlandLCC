@@ -10,10 +10,16 @@ const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export
 
 /**
  * Converts Google Drive sharing links to direct image URLs
+ *
+ * UPDATED FOR 2025: Google deprecated the uc?export=view method in January 2024.
+ * Now using lh3.googleusercontent.com which is the most reliable method as of 2025.
+ *
  * Supports multiple Google Drive URL formats:
  * - https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+ * - https://drive.google.com/file/d/FILE_ID/view?usp=drive_link
  * - https://drive.google.com/open?id=FILE_ID
- * - https://drive.google.com/uc?export=view&id=FILE_ID (already converted)
+ *
+ * Converts to: https://lh3.googleusercontent.com/d/FILE_ID
  *
  * @param url - Google Drive sharing URL or any other URL
  * @returns Direct image URL if it's a Google Drive link, otherwise returns original URL
@@ -23,8 +29,13 @@ function convertGoogleDriveUrl(url: string): string {
     return url; // Not a Google Drive link, return as-is
   }
 
-  // Already a direct link
-  if (url.includes('drive.google.com/uc?')) {
+  // Already converted to lh3 format
+  if (url.includes('lh3.googleusercontent.com')) {
+    return url;
+  }
+
+  // Already converted to thumbnail format
+  if (url.includes('drive.google.com/thumbnail')) {
     return url;
   }
 
@@ -37,13 +48,17 @@ function convertGoogleDriveUrl(url: string): string {
   }
 
   // Format: https://drive.google.com/open?id=FILE_ID
-  const openMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  if (openMatch) {
-    fileId = openMatch[1];
+  if (!fileId) {
+    const openMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (openMatch) {
+      fileId = openMatch[1];
+    }
   }
 
   if (fileId) {
-    return `https://drive.google.com/uc?export=view&id=${fileId}`;
+    // Use lh3.googleusercontent.com - most reliable method as of 2025
+    // This works better than the deprecated uc?export=view method
+    return `https://lh3.googleusercontent.com/d/${fileId}`;
   }
 
   // Couldn't parse, return original
