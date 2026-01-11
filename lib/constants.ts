@@ -1,7 +1,8 @@
 export const COMPANY_INFO = {
   name: 'M&M Land Company',
-  phone: '(740) 555-LAND',
-  email: 'info@mmlandco.com',
+  phone: '', // Phone number to be added later
+  email: 'mdhaessly@gmail.com',
+  address: '1110 County House Lane, Marietta, OH 45750',
   tagline: 'Premium Land in Ohio & West Virginia',
   description: 'Connecting people with exceptional land opportunities across Ohio and West Virginia.',
 };
