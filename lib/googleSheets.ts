@@ -98,17 +98,36 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
             const listings: Listing[] = results.data
               .filter((row) => row.ID && row.Title) // Filter out empty rows
               .map((row) => {
-                // Automatically convert Google Drive links to direct image URLs
-                const thumbnailUrl = convertGoogleDriveUrl(row['Thumbnail Image']);
-                const photos = [thumbnailUrl];
+                const slug = row.Slug;
+                const photos: string[] = [];
 
-                if (row['Additional Photos']) {
+                // AUTO-DETECT IMAGES: If no images specified in Google Sheets,
+                // automatically look for images in /public/images/listings/{slug}/
+
+                // Handle thumbnail image
+                if (row['Thumbnail Image'] && row['Thumbnail Image'].trim()) {
+                  // Use image specified in Google Sheet
+                  photos.push(convertGoogleDriveUrl(row['Thumbnail Image']));
+                } else if (slug) {
+                  // Auto-detect: Use default thumbnail path
+                  photos.push(`/images/listings/${slug}/thumbnail.jpg`);
+                }
+
+                // Handle additional photos
+                if (row['Additional Photos'] && row['Additional Photos'].trim()) {
+                  // Use images specified in Google Sheet
                   const additionalPhotos = row['Additional Photos']
                     .split(',')
                     .map((p) => p.trim())
                     .filter((p) => p)
-                    .map((p) => convertGoogleDriveUrl(p)); // Convert each photo URL
+                    .map((p) => convertGoogleDriveUrl(p));
                   photos.push(...additionalPhotos);
+                } else if (slug) {
+                  // Auto-detect: Look for numbered images (1.jpg through 10.jpg)
+                  // These will be tried in order; missing images just won't display
+                  for (let i = 1; i <= 10; i++) {
+                    photos.push(`/images/listings/${slug}/${i}.jpg`);
+                  }
                 }
 
                 // Parse the created date

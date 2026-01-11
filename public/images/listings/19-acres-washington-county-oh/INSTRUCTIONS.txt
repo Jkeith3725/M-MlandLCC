@@ -1,0 +1,16 @@
+This is an EXAMPLE folder for the property: 19 Acres - Washington County, OH
+
+To add images for this property:
+1. Upload your property photos here
+2. Name them:
+   - thumbnail.jpg (main photo - REQUIRED)
+   - 1.jpg (first additional photo)
+   - 2.jpg (second additional photo)
+   - 3.jpg (third additional photo)
+   - etc.
+
+3. Delete this INSTRUCTIONS.txt file when you're done
+
+The folder name (19-acres-washington-county-oh) matches the slug in Column R of your Google Sheet.
+
+See /public/images/listings/README.md for complete instructions!
