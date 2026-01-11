@@ -70,3 +70,24 @@ export function parseQueryString(search: string): Record<string, string> {
 
   return result;
 }
+
+/**
+ * Adds the basePath prefix to a URL
+ * Required for Next.js static exports where basePath isn't automatically added to dynamic paths
+ */
+export function withBasePath(path: string): string {
+  // Don't add basePath to external URLs
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('//')) {
+    return path;
+  }
+
+  const basePath = '/M-MlandLCC';
+
+  // Don't add if already has basePath
+  if (path.startsWith(basePath)) {
+    return path;
+  }
+
+  // Add basePath to relative paths
+  return `${basePath}${path}`;
+}
