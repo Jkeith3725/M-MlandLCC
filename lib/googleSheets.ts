@@ -9,60 +9,30 @@ const SHEET_ID = '1byRYesF8cokqpOzDRGgIT_hgyrnUUKzguuphUpZh__s';
 const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
 
 /**
- * Converts Google Drive sharing links to direct image URLs
+ * Processes image URLs from Google Sheets
  *
- * UPDATED FOR 2025: Google deprecated the uc?export=view method in January 2024.
- * Now using lh3.googleusercontent.com which is the most reliable method as of 2025.
+ * IMPORTANT: Google Drive is NOT reliable for image hosting (returns 403 errors).
  *
- * Supports multiple Google Drive URL formats:
- * - https://drive.google.com/file/d/FILE_ID/view?usp=sharing
- * - https://drive.google.com/file/d/FILE_ID/view?usp=drive_link
- * - https://drive.google.com/open?id=FILE_ID
+ * Recommended image sources:
+ * - Local repo images: /images/listings/property-1.jpg (MOST RELIABLE)
+ * - Imgur: https://i.imgur.com/ABC123.jpg (FREE, RELIABLE)
+ * - Cloudinary: https://res.cloudinary.com/account/image/upload/v1/file.jpg (PROFESSIONAL)
  *
- * Converts to: https://lh3.googleusercontent.com/d/FILE_ID
- *
- * @param url - Google Drive sharing URL or any other URL
- * @returns Direct image URL if it's a Google Drive link, otherwise returns original URL
+ * @param url - Image URL from Google Sheet
+ * @returns The URL as-is (no conversion needed for supported sources)
  */
-function convertGoogleDriveUrl(url: string): string {
-  if (!url || !url.includes('drive.google.com')) {
-    return url; // Not a Google Drive link, return as-is
+function processImageUrl(url: string): string {
+  if (!url || url.trim() === '') {
+    return '';
   }
 
-  // Already converted to lh3 format
-  if (url.includes('lh3.googleusercontent.com')) {
-    return url;
-  }
+  // Return URL as-is - works for:
+  // - Local paths: /images/listings/property-1.jpg
+  // - Imgur: https://i.imgur.com/...
+  // - Cloudinary: https://res.cloudinary.com/...
+  // - Any other direct image URL
 
-  // Already converted to thumbnail format
-  if (url.includes('drive.google.com/thumbnail')) {
-    return url;
-  }
-
-  let fileId: string | null = null;
-
-  // Format: https://drive.google.com/file/d/FILE_ID/view
-  const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (fileMatch) {
-    fileId = fileMatch[1];
-  }
-
-  // Format: https://drive.google.com/open?id=FILE_ID
-  if (!fileId) {
-    const openMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (openMatch) {
-      fileId = openMatch[1];
-    }
-  }
-
-  if (fileId) {
-    // Use lh3.googleusercontent.com - most reliable method as of 2025
-    // This works better than the deprecated uc?export=view method
-    return `https://lh3.googleusercontent.com/d/${fileId}`;
-  }
-
-  // Couldn't parse, return original
-  return url;
+  return url.trim();
 }
 
 interface SheetRow {
@@ -113,16 +83,16 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
             const listings: Listing[] = results.data
               .filter((row) => row.ID && row.Title) // Filter out empty rows
               .map((row) => {
-                // Automatically convert Google Drive links to direct image URLs
-                const thumbnailUrl = convertGoogleDriveUrl(row['Thumbnail Image']);
-                const photos = [thumbnailUrl];
+                // Process image URLs (supports local paths, Imgur, Cloudinary, etc.)
+                const thumbnailUrl = processImageUrl(row['Thumbnail Image']);
+                const photos = thumbnailUrl ? [thumbnailUrl] : [];
 
                 if (row['Additional Photos']) {
                   const additionalPhotos = row['Additional Photos']
                     .split(',')
                     .map((p) => p.trim())
                     .filter((p) => p)
-                    .map((p) => convertGoogleDriveUrl(p)); // Convert each photo URL
+                    .map((p) => processImageUrl(p)); // Process each photo URL
                   photos.push(...additionalPhotos);
                 }
 
