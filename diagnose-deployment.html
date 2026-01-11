@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M&M Land Company - Deployment Diagnostic</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f5f5f5;
+        }
+        h1 { color: #2c5530; }
+        h2 { color: #4a4a4a; margin-top: 30px; }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.loading { background: #ffd700; color: #000; }
+        .status.success { background: #4caf50; color: white; }
+        .status.error { background: #f44336; color: white; }
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #ccc;
+        }
+        .test-item.success { border-left-color: #4caf50; }
+        .test-item.error { border-left-color: #f44336; }
+        img.test-img {
+            max-width: 300px;
+            max-height: 200px;
+            border: 2px solid #ccc;
+            margin-top: 10px;
+        }
+        code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            background: #2c5530;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #1e3b21; }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 M&M Land Company - Deployment Diagnostic Tool</h1>
+    <p>This tool will test if your property images are properly deployed and identify exactly what's wrong.</p>
+
+    <div class="warning-box">
+        <strong>⚠️ Open this file in a browser</strong><br>
+        Save this file and open it in Chrome, Firefox, or Safari. It will test the deployed GitHub Pages site.
+    </div>
+
+    <button onclick="runAllTests()">🚀 Run All Tests</button>
+
+    <div class="test-section">
+        <h2>Test 1: Homepage Accessible</h2>
+        <div id="test1" class="test-item">
+            <span>Testing: </span><code>https://jkeith3725.github.io/M-MlandLCC/</code>
+            <span id="test1-status" class="status loading">Testing...</span>
+            <div id="test1-result"></div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Property Page Accessible</h2>
+        <div id="test2" class="test-item">
+            <span>Testing: </span><code>https://jkeith3725.github.io/M-MlandLCC/listings/19-acres-washington-county-oh</code>
+            <span id="test2-status" class="status loading">Testing...</span>
+            <div id="test2-result"></div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Image with basePath</h2>
+        <div id="test3" class="test-item">
+            <span>Testing: </span><code>https://jkeith3725.github.io/M-MlandLCC/images/listings/19-acres-washington-county-oh/thumbnail.jpg</code>
+            <span id="test3-status" class="status loading">Testing...</span>
+            <div id="test3-result"></div>
+            <img id="test3-img" class="test-img" style="display:none;">
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Image without basePath</h2>
+        <div id="test4" class="test-item">
+            <span>Testing: </span><code>https://jkeith3725.github.io/images/listings/19-acres-washington-county-oh/thumbnail.jpg</code>
+            <span id="test4-status" class="status loading">Testing...</span>
+            <div id="test4-result"></div>
+            <img id="test4-img" class="test-img" style="display:none;">
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 5: Check HTML Source</h2>
+        <div id="test5" class="test-item">
+            <span>Fetching property page HTML to check image paths...</span>
+            <span id="test5-status" class="status loading">Testing...</span>
+            <div id="test5-result"></div>
+        </div>
+    </div>
+
+    <div class="test-section" id="diagnosis" style="display:none;">
+        <h2>🎯 Diagnosis</h2>
+        <div id="diagnosis-content"></div>
+    </div>
+
+    <div class="test-section" id="solution" style="display:none;">
+        <h2>✅ Solution</h2>
+        <div id="solution-content"></div>
+    </div>
+
+    <script>
+        let results = {};
+
+        async function testUrl(url, testId) {
+            const statusEl = document.getElementById(`${testId}-status`);
+            const resultEl = document.getElementById(`${testId}-result`);
+            const testEl = document.getElementById(testId);
+
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                results[testId] = {
+                    success: response.ok,
+                    status: response.status,
+                    contentType: response.headers.get('content-type')
+                };
+
+                if (response.ok) {
+                    statusEl.textContent = '✓ Success';
+                    statusEl.className = 'status success';
+                    testEl.className = 'test-item success';
+                    resultEl.innerHTML = `<p>Status: ${response.status} OK</p>
+                                         <p>Content-Type: ${response.headers.get('content-type')}</p>`;
+                } else {
+                    statusEl.textContent = '✗ Failed';
+                    statusEl.className = 'status error';
+                    testEl.className = 'test-item error';
+                    resultEl.innerHTML = `<p><strong>Error: ${response.status}</strong></p>`;
+                }
+            } catch (error) {
+                results[testId] = { success: false, error: error.message };
+                statusEl.textContent = '✗ Failed';
+                statusEl.className = 'status error';
+                testEl.className = 'test-item error';
+                resultEl.innerHTML = `<p><strong>Error:</strong> ${error.message}</p>`;
+            }
+        }
+
+        async function testImage(url, testId) {
+            const statusEl = document.getElementById(`${testId}-status`);
+            const resultEl = document.getElementById(`${testId}-result`);
+            const testEl = document.getElementById(testId);
+            const imgEl = document.getElementById(`${testId}-img`);
+
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    results[testId] = { success: true, loaded: true };
+                    statusEl.textContent = '✓ Success';
+                    statusEl.className = 'status success';
+                    testEl.className = 'test-item success';
+                    resultEl.innerHTML = `<p><strong>✓ Image loads successfully!</strong></p>
+                                         <p>Dimensions: ${img.width} x ${img.height}</p>`;
+                    imgEl.src = url;
+                    imgEl.style.display = 'block';
+                    resolve(true);
+                };
+                img.onerror = () => {
+                    results[testId] = { success: false, loaded: false };
+                    statusEl.textContent = '✗ Failed';
+                    statusEl.className = 'status error';
+                    testEl.className = 'test-item error';
+                    resultEl.innerHTML = `<p><strong>✗ Image failed to load (404 or blocked)</strong></p>`;
+                    resolve(false);
+                };
+                img.src = url;
+            });
+        }
+
+        async function testHtmlSource() {
+            const statusEl = document.getElementById('test5-status');
+            const resultEl = document.getElementById('test5-result');
+            const testEl = document.getElementById('test5');
+
+            try {
+                const response = await fetch('https://jkeith3725.github.io/M-MlandLCC/listings/19-acres-washington-county-oh');
+                const html = await response.text();
+
+                // Look for image tags
+                const imgMatches = html.match(/<img[^>]+src="([^"]+)"[^>]*>/g) || [];
+                const srcMatches = imgMatches.map(tag => {
+                    const match = tag.match(/src="([^"]+)"/);
+                    return match ? match[1] : null;
+                }).filter(Boolean);
+
+                results.test5 = { success: true, imageSrcs: srcMatches };
+                statusEl.textContent = '✓ Success';
+                statusEl.className = 'status success';
+                testEl.className = 'test-item success';
+
+                resultEl.innerHTML = `
+                    <p><strong>Found ${srcMatches.length} image tags in HTML:</strong></p>
+                    <pre>${srcMatches.map(src => src).join('\n')}</pre>
+                    <p><strong>Looking for thumbnail path:</strong></p>
+                    <pre>/M-MlandLCC/images/listings/19-acres-washington-county-oh/thumbnail.jpg</pre>
+                    ${srcMatches.some(src => src.includes('19-acres-washington-county-oh/thumbnail'))
+                        ? '<p style="color: green;">✓ Thumbnail path found in HTML!</p>'
+                        : '<p style="color: red;">✗ Thumbnail path NOT found in HTML!</p>'}
+                `;
+            } catch (error) {
+                results.test5 = { success: false, error: error.message };
+                statusEl.textContent = '✗ Failed';
+                statusEl.className = 'status error';
+                testEl.className = 'test-item error';
+                resultEl.innerHTML = `<p><strong>Error:</strong> ${error.message}</p>`;
+            }
+        }
+
+        async function runAllTests() {
+            // Reset
+            document.getElementById('diagnosis').style.display = 'none';
+            document.getElementById('solution').style.display = 'none';
+
+            // Run tests
+            await testUrl('https://jkeith3725.github.io/M-MlandLCC/', 'test1');
+            await testUrl('https://jkeith3725.github.io/M-MlandLCC/listings/19-acres-washington-county-oh', 'test2');
+            await testImage('https://jkeith3725.github.io/M-MlandLCC/images/listings/19-acres-washington-county-oh/thumbnail.jpg', 'test3');
+            await testImage('https://jkeith3725.github.io/images/listings/19-acres-washington-county-oh/thumbnail.jpg', 'test4');
+            await testHtmlSource();
+
+            // Show diagnosis
+            showDiagnosis();
+        }
+
+        function showDiagnosis() {
+            const diagnosisEl = document.getElementById('diagnosis');
+            const diagnosisContent = document.getElementById('diagnosis-content');
+            const solutionEl = document.getElementById('solution');
+            const solutionContent = document.getElementById('solution-content');
+
+            diagnosisEl.style.display = 'block';
+            solutionEl.style.display = 'block';
+
+            let diagnosis = '';
+            let solution = '';
+
+            if (results.test3?.success) {
+                diagnosis = `<div class="info-box">
+                    <p><strong>✅ Images ARE deployed correctly!</strong></p>
+                    <p>The image file exists at the correct URL with basePath.</p>
+                    <p>If images still don't show on the site, the issue is in the HTML rendering.</p>
+                </div>`;
+                solution = `<p>The images are deployed correctly. If they're not showing:</p>
+                    <ol>
+                        <li>Hard refresh the page (Ctrl+Shift+R or Cmd+Shift+R)</li>
+                        <li>Clear browser cache</li>
+                        <li>Check browser console for errors (F12)</li>
+                        <li>Verify the HTML contains correct image paths (see Test 5)</li>
+                    </ol>`;
+            } else if (results.test4?.success) {
+                diagnosis = `<div class="warning-box">
+                    <p><strong>⚠️ basePath Issue Detected</strong></p>
+                    <p>Images are deployed but at the wrong location!</p>
+                    <p>Images work WITHOUT basePath but FAIL with basePath.</p>
+                    <p>This means the public folder was copied incorrectly.</p>
+                </div>`;
+                solution = `<p>The images are in the wrong location. To fix:</p>
+                    <ol>
+                        <li>Check if images are being copied to <code>out/images/</code> instead of <code>out/M-MlandLCC/images/</code></li>
+                        <li>Verify next.config.js has correct basePath</li>
+                        <li>Rebuild and redeploy</li>
+                    </ol>`;
+            } else {
+                diagnosis = `<div class="warning-box">
+                    <p><strong>🚨 Images NOT Deployed</strong></p>
+                    <p>Images are not accessible at any URL.</p>
+                    <p>This means:</p>
+                    <ul>
+                        <li>Build may have failed</li>
+                        <li>Images not copied to out/ directory</li>
+                        <li>GitHub Actions deployment failed</li>
+                    </ul>
+                </div>`;
+                solution = `<p><strong>MOST LIKELY CAUSE: Build Failure</strong></p>
+                    <p>To fix:</p>
+                    <ol>
+                        <li><strong>Check GitHub Actions logs:</strong> <a href="https://github.com/Jkeith3725/M-MlandLCC/actions" target="_blank">https://github.com/Jkeith3725/M-MlandLCC/actions</a></li>
+                        <li>Look for failed builds (red X icon)</li>
+                        <li>Check build logs for errors (likely font loading or dependency errors)</li>
+                        <li>Fix any errors and push to main branch</li>
+                        <li>Wait for successful deployment</li>
+                        <li>Run this diagnostic again</li>
+                    </ol>
+                    <p><strong>Known Issue:</strong> Font loading errors can cause build to fail completely.</p>`;
+            }
+
+            diagnosisContent.innerHTML = diagnosis;
+            solutionContent.innerHTML = solution;
+        }
+
+        // Auto-run on page load
+        window.onload = () => {
+            setTimeout(runAllTests, 1000);
+        };
+    </script>
+</body>
+</html>
