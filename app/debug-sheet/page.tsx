@@ -67,7 +67,7 @@ export default async function DebugSheetPage() {
           <li>Column Q: <code className="bg-gray-100 px-2 py-1">Google Maps Embed</code> (exact match required)</li>
         </ul>
         <p className="mt-2 text-sm text-gray-600">
-          If you see "EMPTY/UNDEFINED" above but you have data in your sheet, your column headers likely don't match exactly.
+          If you see &quot;EMPTY/UNDEFINED&quot; above but you have data in your sheet, your column headers likely don&apos;t match exactly.
         </p>
       </div>
     </div>
