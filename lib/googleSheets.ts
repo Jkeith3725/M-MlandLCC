@@ -140,8 +140,8 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
                   // Use image specified in Google Sheet
                   photos.push(convertGoogleDriveUrl(row['Thumbnail Image']));
                 } else if (slug) {
-                  // Auto-detect: Use default thumbnail path with basePath
-                  photos.push(`/M-MlandLCC/images/listings/${slug}/thumbnail.jpg`);
+                  // Auto-detect: Use default thumbnail path (basePath added automatically by Next.js)
+                  photos.push(`/images/listings/${slug}/thumbnail.jpg`);
                 }
 
                 // Handle additional photos
@@ -154,10 +154,11 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
                     .map((p) => convertGoogleDriveUrl(p));
                   photos.push(...additionalPhotos);
                 } else if (slug) {
-                  // Auto-detect: Look for numbered images (1.jpg through 10.jpg) with basePath
+                  // Auto-detect: Look for numbered images (1.jpg through 10.jpg)
                   // These will be tried in order; missing images just won't display
+                  // Note: basePath is added automatically by Next.js
                   for (let i = 1; i <= 10; i++) {
-                    photos.push(`/M-MlandLCC/images/listings/${slug}/${i}.jpg`);
+                    photos.push(`/images/listings/${slug}/${i}.jpg`);
                   }
                 }
 
