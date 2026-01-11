@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { FooterWrapper } from '@/components/layout/FooterWrapper';
 
-const inter = Inter({ subsets: ['latin'] });
+// Using system fonts to avoid build failures with Google Fonts
+const inter = { className: 'font-sans' };
 
 export const metadata: Metadata = {
   title: 'M&M Land Company - Land for Sale in Ohio & West Virginia',
