@@ -172,10 +172,22 @@ export default async function ListingDetailPage({ params }: { params: { slug: st
                 <div>
                   <h2 className="font-serif text-2xl font-bold text-brown-dark mb-4">Location</h2>
                   <div className="relative aspect-video rounded-xl overflow-hidden bg-cream-dark shadow-soft">
-                    <div
-                      dangerouslySetInnerHTML={{ __html: listing.mapEmbedHtml }}
-                      className="w-full h-full"
-                    />
+                    {listing.mapEmbedHtml.trim().startsWith('<') ? (
+                      // It's HTML embed code (iframe)
+                      <div
+                        dangerouslySetInnerHTML={{ __html: listing.mapEmbedHtml }}
+                        className="w-full h-full"
+                      />
+                    ) : (
+                      // It's a URL - convert to iframe
+                      <iframe
+                        src={listing.mapEmbedHtml}
+                        className="w-full h-full border-0"
+                        allowFullScreen
+                        loading="lazy"
+                        title="Property Map"
+                      />
+                    )}
                   </div>
                   <p className="text-sm text-gray-600 mt-2">
                     Note: Map location is approximate and may not reflect exact property boundaries.
