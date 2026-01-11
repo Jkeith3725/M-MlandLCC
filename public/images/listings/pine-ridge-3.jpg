@@ -1,7 +1,0 @@
-<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-  <rect width="800" height="600" fill="#409640"/>
-  <path d="M0,500 Q100,480 200,490 T400,500 T600,490 T800,500 L800,600 L0,600 Z" fill="#1f4a1f"/>
-  <rect x="300" y="350" width="200" height="150" fill="#663300" opacity="0.6"/>
-  <path d="M300,350 L400,280 L500,350 Z" fill="#8B4513" opacity="0.6"/>
-  <text x="400" y="580" font-family="Arial" font-size="20" fill="#fff" text-anchor="middle">Trail Access</text>
-</svg>
