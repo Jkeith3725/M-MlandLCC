@@ -50,6 +50,37 @@ function convertGoogleDriveUrl(url: string): string {
   return url;
 }
 
+/**
+ * Converts YouTube URL to embed format
+ * Handles watch URLs, short URLs, and embed URLs
+ * @param url - YouTube URL in any format
+ * @returns YouTube embed URL or original URL if not YouTube
+ */
+function convertYouTubeUrl(url: string): string {
+  if (!url || (!url.includes('youtube.com') && !url.includes('youtu.be'))) {
+    return url;
+  }
+
+  // Already an embed URL
+  if (url.includes('/embed/')) {
+    return url;
+  }
+
+  // Extract video ID from watch URL: https://www.youtube.com/watch?v=VIDEO_ID
+  const watchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+  if (watchMatch && watchMatch[1]) {
+    return `https://www.youtube.com/embed/${watchMatch[1]}`;
+  }
+
+  // Extract video ID from short URL: https://youtu.be/VIDEO_ID
+  const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  if (shortMatch && shortMatch[1]) {
+    return `https://www.youtube.com/embed/${shortMatch[1]}`;
+  }
+
+  return url;
+}
+
 interface SheetRow {
   ID: string;
   Title: string;
@@ -152,11 +183,11 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
                   photos,
                   shortDescription: row['Short Description'] || '',
                   overview: row['Full Overview'] || row['Short Description'] || '',
-                  roadFrontage: row['Road Frontage'] || undefined,
-                  utilities: row.Utilities || undefined,
-                  parcelId: row['Parcel ID'] || undefined,
-                  youtubeUrl: row['YouTube URL'] || undefined,
-                  mapEmbedHtml: row['Google Maps Embed'] || undefined,
+                  roadFrontage: row['Road Frontage']?.trim() || undefined,
+                  utilities: row.Utilities?.trim() || undefined,
+                  parcelId: row['Parcel ID']?.trim() || undefined,
+                  youtubeUrl: row['YouTube URL']?.trim() ? convertYouTubeUrl(row['YouTube URL'].trim()) : undefined,
+                  mapEmbedHtml: row['Google Maps Embed']?.trim() || undefined,
                   slug: row.Slug,
                   createdAt,
                 };
