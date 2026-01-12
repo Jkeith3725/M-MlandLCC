@@ -39,11 +39,17 @@ export function WhyMMSection() {
   ];
 
   return (
-    <section className="py-10 md:py-16 bg-white">
-      <div className="container max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-forest-800 mb-4">Why Choose M&M Land Company?</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+    <section className="py-16 md:py-24 bg-gradient-to-br from-forest-500 via-forest-600 to-forest-700 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-tan-accent rounded-full filter blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-cream rounded-full filter blur-3xl" />
+      </div>
+
+      <div className="container max-w-7xl mx-auto px-4 relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-serif">Why Choose M&M Land Company?</h2>
+          <p className="text-xl md:text-2xl text-cream/90 max-w-3xl mx-auto">
             We bring decades of experience and a genuine commitment to every transaction
           </p>
         </div>
@@ -52,13 +58,13 @@ export function WhyMMSection() {
           {benefits.map((benefit, index) => (
             <div
               key={index}
-              className="text-center p-6 rounded-lg hover:bg-forest-50 transition-colors duration-300"
+              className="text-center p-8 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 hover:border-tan-accent transition-all duration-500 hover:scale-105 group"
             >
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-forest-100 text-forest-600 rounded-full mb-4">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-tan-accent text-brown-dark rounded-full mb-6 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
                 {benefit.icon}
               </div>
-              <h3 className="text-xl font-bold text-forest-800 mb-2">{benefit.title}</h3>
-              <p className="text-gray-600">{benefit.description}</p>
+              <h3 className="text-xl font-bold text-white mb-3">{benefit.title}</h3>
+              <p className="text-cream/80 leading-relaxed">{benefit.description}</p>
             </div>
           ))}
         </div>

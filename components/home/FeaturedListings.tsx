@@ -12,15 +12,21 @@ export function FeaturedListings({ listings }: FeaturedListingsProps) {
   const displayListings = listings ? listings.slice(0, 6) : [];
 
   return (
-    <section className="py-10 md:py-16 bg-cream">
-      <div className="container max-w-7xl mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-brown-dark mb-2">Featured Properties</h2>
-            <p className="text-brown-dark/70 text-lg">Hand-picked land opportunities in Ohio & West Virginia.</p>
+    <section className="py-16 md:py-24 bg-gradient-to-b from-cream via-tan-accent/5 to-cream relative overflow-hidden">
+      {/* Subtle background texture */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30L30 0z' fill='%232B1D14' fill-opacity='0.4'/%3E%3C/svg%3E")`,
+        backgroundSize: '30px 30px'
+      }} />
+
+      <div className="container max-w-7xl mx-auto px-4 relative z-10">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <div className="space-y-3">
+            <h2 className="text-4xl md:text-5xl font-bold text-brown-dark font-serif">Featured Properties</h2>
+            <p className="text-brown-dark/70 text-lg md:text-xl max-w-2xl">Hand-picked land opportunities in Ohio & West Virginia.</p>
           </div>
           <Link href="/listings">
-            <Button variant="outline" className="border-brown-dark text-brown-dark hover:bg-brown-dark hover:text-cream">
+            <Button variant="outline" className="border-2 border-brown-dark text-brown-dark hover:bg-brown-dark hover:text-cream font-semibold px-8 py-3 text-base transition-all duration-300 hover:scale-105">
               View All Inventory
             </Button>
           </Link>
