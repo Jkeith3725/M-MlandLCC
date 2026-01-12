@@ -52,6 +52,43 @@ function convertGoogleDriveUrl(url: string): string {
 }
 
 /**
+ * Detects which image file extension exists (.jpg or .jpeg) and returns the path
+ * Only works during build time (server-side)
+ * @param slug - Property slug
+ * @param filename - Base filename without extension (e.g., 'thumbnail' or '1')
+ * @returns Image path with correct extension, or null if neither exists
+ */
+function detectImagePath(slug: string, filename: string): string | null {
+  // Only run on server-side (during build)
+  if (typeof window !== 'undefined') {
+    return null;
+  }
+
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const basePath = path.join(process.cwd(), 'public', 'images', 'listings', slug);
+
+    // Check .jpeg first (more common for camera uploads)
+    const jpegPath = path.join(basePath, `${filename}.jpeg`);
+    if (fs.existsSync(jpegPath)) {
+      return withBasePath(`/images/listings/${slug}/${filename}.jpeg`);
+    }
+
+    // Check .jpg second
+    const jpgPath = path.join(basePath, `${filename}.jpg`);
+    if (fs.existsSync(jpgPath)) {
+      return withBasePath(`/images/listings/${slug}/${filename}.jpg`);
+    }
+  } catch (error) {
+    // fs module not available (client-side), return null
+    return null;
+  }
+
+  return null; // Neither extension exists
+}
+
+/**
  * Converts YouTube URL to embed format
  * Handles watch URLs, short URLs, and embed URLs
  * @param url - YouTube URL in any format
@@ -141,10 +178,11 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
                   // Use image specified in Google Sheet
                   photos.push(convertGoogleDriveUrl(row['Thumbnail Image']));
                 } else if (slug) {
-                  // Auto-detect: Try both .jpeg and .jpg extensions for thumbnail
-                  // .jpeg first since that's the more common format for uploaded images
-                  photos.push(withBasePath(`/images/listings/${slug}/thumbnail.jpeg`));
-                  photos.push(withBasePath(`/images/listings/${slug}/thumbnail.jpg`));
+                  // Auto-detect: Check which extension exists (.jpeg or .jpg)
+                  const thumbnailPath = detectImagePath(slug, 'thumbnail');
+                  if (thumbnailPath) {
+                    photos.push(thumbnailPath);
+                  }
                 }
 
                 // Handle additional photos
@@ -157,11 +195,12 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
                     .map((p) => convertGoogleDriveUrl(p));
                   photos.push(...additionalPhotos);
                 } else if (slug) {
-                  // Auto-detect: Look for numbered images (supports both .jpeg and .jpg)
-                  // .jpeg first since that's the more common format for uploaded images
+                  // Auto-detect: Check which numbered images exist (supports both .jpeg and .jpg)
                   for (let i = 1; i <= 25; i++) {
-                    photos.push(withBasePath(`/images/listings/${slug}/${i}.jpeg`));
-                    photos.push(withBasePath(`/images/listings/${slug}/${i}.jpg`));
+                    const imagePath = detectImagePath(slug, i.toString());
+                    if (imagePath) {
+                      photos.push(imagePath);
+                    }
                   }
                 }
 
