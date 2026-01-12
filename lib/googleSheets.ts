@@ -141,9 +141,10 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
                   // Use image specified in Google Sheet
                   photos.push(convertGoogleDriveUrl(row['Thumbnail Image']));
                 } else if (slug) {
-                  // Auto-detect: Try both .jpg and .jpeg extensions for thumbnail
-                  photos.push(withBasePath(`/images/listings/${slug}/thumbnail.jpg`));
+                  // Auto-detect: Try both .jpeg and .jpg extensions for thumbnail
+                  // .jpeg first since that's the more common format for uploaded images
                   photos.push(withBasePath(`/images/listings/${slug}/thumbnail.jpeg`));
+                  photos.push(withBasePath(`/images/listings/${slug}/thumbnail.jpg`));
                 }
 
                 // Handle additional photos
@@ -156,11 +157,11 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
                     .map((p) => convertGoogleDriveUrl(p));
                   photos.push(...additionalPhotos);
                 } else if (slug) {
-                  // Auto-detect: Look for numbered images (supports both .jpg and .jpeg)
-                  // These will be tried in order; missing images just won't display
+                  // Auto-detect: Look for numbered images (supports both .jpeg and .jpg)
+                  // .jpeg first since that's the more common format for uploaded images
                   for (let i = 1; i <= 25; i++) {
-                    photos.push(withBasePath(`/images/listings/${slug}/${i}.jpg`));
                     photos.push(withBasePath(`/images/listings/${slug}/${i}.jpeg`));
+                    photos.push(withBasePath(`/images/listings/${slug}/${i}.jpg`));
                   }
                 }
 
