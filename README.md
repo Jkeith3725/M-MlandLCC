@@ -2,6 +2,24 @@
 
 A premium land listing website for properties in Ohio and West Virginia.
 
+## ⚠️ IMPORTANT: BasePath for GitHub Pages
+
+This site deploys to GitHub Pages at `/M-MlandLCC` subdirectory. **All internal URLs must use `withBasePath()`** to avoid 404 errors.
+
+```typescript
+import { withBasePath } from '@/lib/utils';
+
+// ✅ CORRECT
+const url = withBasePath('/images/photo.jpg');
+
+// ❌ WRONG - will cause 404 on deployed site
+const url = '/images/photo.jpg';
+```
+
+**Before deploying, run:** `npm run verify-basepath`
+
+See **[BASEPATH_GUIDE.md](./BASEPATH_GUIDE.md)** for complete details.
+
 ## Getting Started
 
 1. Install dependencies:

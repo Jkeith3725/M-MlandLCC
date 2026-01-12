@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify-basepath": "node scripts/verify-basepath.js",
+    "prebuild": "npm run verify-basepath"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",
