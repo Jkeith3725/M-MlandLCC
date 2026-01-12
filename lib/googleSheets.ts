@@ -1,5 +1,6 @@
 import Papa from 'papaparse';
 import { Listing } from './types';
+import { withBasePath } from './utils';
 
 // Google Sheet ID extracted from your shared link
 // https://docs.google.com/spreadsheets/d/1byRYesF8cokqpOzDRGgIT_hgyrnUUKzguuphUpZh__s/edit?usp=sharing
@@ -140,8 +141,9 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
                   // Use image specified in Google Sheet
                   photos.push(convertGoogleDriveUrl(row['Thumbnail Image']));
                 } else if (slug) {
-                  // Auto-detect: Use default thumbnail path (basePath added automatically by Next.js)
-                  photos.push(`/images/listings/${slug}/thumbnail.jpg`);
+                  // Auto-detect: Try both .jpg and .jpeg extensions for thumbnail
+                  photos.push(withBasePath(`/images/listings/${slug}/thumbnail.jpg`));
+                  photos.push(withBasePath(`/images/listings/${slug}/thumbnail.jpeg`));
                 }
 
                 // Handle additional photos
@@ -154,11 +156,11 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
                     .map((p) => convertGoogleDriveUrl(p));
                   photos.push(...additionalPhotos);
                 } else if (slug) {
-                  // Auto-detect: Look for numbered images (1.jpg through 10.jpg)
+                  // Auto-detect: Look for numbered images (supports both .jpg and .jpeg)
                   // These will be tried in order; missing images just won't display
-                  // Note: basePath is added automatically by Next.js
-                  for (let i = 1; i <= 10; i++) {
-                    photos.push(`/images/listings/${slug}/${i}.jpg`);
+                  for (let i = 1; i <= 25; i++) {
+                    photos.push(withBasePath(`/images/listings/${slug}/${i}.jpg`));
+                    photos.push(withBasePath(`/images/listings/${slug}/${i}.jpeg`));
                   }
                 }
 
