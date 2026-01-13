@@ -28,7 +28,9 @@ export const ListingSchema = z.object({
   youtubeUrl: z.string().url('YouTube URL must be valid').optional(),
   mapEmbedHtml: z.string().optional(),
   slug: z.string().min(1, 'Slug is required').regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with hyphens'),
-  createdAt: z.date(),
+  createdAt: z.union([z.date(), z.string()]).transform((val) => {
+    return typeof val === 'string' ? new Date(val) : val;
+  }),
 });
 
 /**
