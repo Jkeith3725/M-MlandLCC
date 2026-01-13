@@ -6,15 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "verify-basepath": "node scripts/verify-basepath.js",
-    "validate": "npx tsx scripts/validate-build.ts"
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",
     "clsx": "^2.1.0",
-    "googleapis": "^170.0.0",
     "next": "^14.2.0",
     "papaparse": "^5.5.3",
     "react": "^18.3.0",
@@ -32,7 +28,6 @@
     "eslint-config-next": "^14.2.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",
-    "ts-node": "^10.9.2",
     "typescript": "^5.3.0"
   }
 }
