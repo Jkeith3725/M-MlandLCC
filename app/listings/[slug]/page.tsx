@@ -6,13 +6,14 @@ import { ListingCard } from '@/components/listings/ListingCard';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { getListingBySlug, getSimilarListings } from '@/lib/api';
-import { MOCK_LISTINGS } from '@/lib/mockData';
+import { fetchListingsFromSheet } from '@/lib/googleSheets';
 import { formatPrice, formatAcreage } from '@/lib/utils';
 import { COMPANY_INFO } from '@/lib/constants';
 
 export async function generateStaticParams() {
-  // Use hardcoded listings - guaranteed to work
-  return MOCK_LISTINGS.map((listing) => ({
+  // Fetch from Google Sheets (falls back to MOCK_LISTINGS if it fails)
+  const listings = await fetchListingsFromSheet();
+  return listings.map((listing) => ({
     slug: listing.slug,
   }));
 }
