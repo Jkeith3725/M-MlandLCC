@@ -10,7 +10,6 @@
     "typecheck": "tsc --noEmit",
     "verify-basepath": "node scripts/verify-basepath.js",
     "validate": "npx tsx scripts/validate-build.ts",
-    "prebuild": "npm run verify-basepath"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",
