@@ -41,7 +41,6 @@ jobs:
       - name: Build with Next.js
         env:
           NEXT_PUBLIC_USE_GOOGLE_SHEETS: true
-          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
         run: npm run build
 
       - name: Upload artifact
