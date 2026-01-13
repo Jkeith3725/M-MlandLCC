@@ -6,25 +6,15 @@ import { ListingCard } from '@/components/listings/ListingCard';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { getListingBySlug, getSimilarListings } from '@/lib/api';
-import { fetchListingsFromSheet } from '@/lib/googleSheets';
+import { MOCK_LISTINGS } from '@/lib/mockData';
 import { formatPrice, formatAcreage } from '@/lib/utils';
 import { COMPANY_INFO } from '@/lib/constants';
 
 export async function generateStaticParams() {
-  try {
-    // Always fetch from Google Sheets
-    const listings = await fetchListingsFromSheet();
-
-    console.log(`generateStaticParams: Found ${listings.length} listings`);
-
-    return listings.map((listing) => ({
-      slug: listing.slug,
-    }));
-  } catch (error) {
-    console.error('Error generating static params:', error);
-    // Return empty array - pages will be generated on-demand if needed
-    return [];
-  }
+  // Use hardcoded listings - guaranteed to work
+  return MOCK_LISTINGS.map((listing) => ({
+    slug: listing.slug,
+  }));
 }
 
 export default async function ListingDetailPage({ params }: { params: { slug: string } }) {
