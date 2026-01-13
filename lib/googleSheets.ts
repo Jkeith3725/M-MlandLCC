@@ -121,7 +121,7 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
             reject(error);
           }
         },
-        error: (error) => {
+        error: (error: Error) => {
           console.error('❌ CSV parse error:', error);
           reject(error);
         },
