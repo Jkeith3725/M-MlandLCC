@@ -4,7 +4,7 @@ export interface Listing {
   title: string;
   state: 'OH' | 'WV';
   county: string;
-  nearestTown: string;
+  nearestTown?: string;
   acreage: number;
   price: number;
   isNew: boolean;

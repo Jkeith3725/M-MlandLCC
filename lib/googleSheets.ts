@@ -1,12 +1,36 @@
 import Papa from 'papaparse';
 import { Listing } from './types';
 import { withBasePath } from './utils';
+import { fetchWithRetryHttp } from './retry';
+import { validateListings } from './schemas';
+
+// Conditional server-side imports
+let fetchListingsFromSheetWithAuth: (() => Promise<Listing[]>) | null = null;
+let saveToCache: ((data: Listing[]) => void) | null = null;
+let loadFromCache: (() => Listing[] | null) | null = null;
+
+// Only import server-side modules when not in browser
+if (typeof window === 'undefined') {
+  try {
+    const cacheModule = require('./cache');
+    saveToCache = cacheModule.saveToCache;
+    loadFromCache = cacheModule.loadFromCache;
+
+    if (process.env.GOOGLE_SERVICE_ACCOUNT) {
+      const authModule = require('./google-auth');
+      fetchListingsFromSheetWithAuth = authModule.fetchListingsFromSheetWithAuth;
+      console.log('🔐 Service Account authentication available');
+    }
+  } catch (error) {
+    console.log('ℹ️  Service Account auth not available, will use public CSV fallback');
+  }
+}
 
 // Google Sheet ID extracted from your shared link
 // https://docs.google.com/spreadsheets/d/1byRYesF8cokqpOzDRGgIT_hgyrnUUKzguuphUpZh__s/edit?usp=sharing
 const SHEET_ID = '1byRYesF8cokqpOzDRGgIT_hgyrnUUKzguuphUpZh__s';
 
-// Google Sheets CSV export URL for public sheets
+// Google Sheets CSV export URL for public sheets (fallback method)
 const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
 
 /**
@@ -142,114 +166,183 @@ interface SheetRow {
 }
 
 /**
- * Fetches listing data from Google Sheets
- * The sheet must be publicly accessible (Anyone with the link can view)
+ * Fetches listing data via public CSV export (fallback method)
+ * Internal function - use fetchListingsFromSheet() instead
+ */
+async function fetchFromPublicCSV(): Promise<Listing[]> {
+  console.log('📥 Fetching from public CSV export...');
+
+  const response = await fetchWithRetryHttp(SHEET_CSV_URL);
+  const csvText = await response.text();
+
+  return new Promise((resolve, reject) => {
+    Papa.parse<SheetRow>(csvText, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        try {
+          const listings: Listing[] = results.data
+            .filter((row) => row.ID && row.Title)
+            .map((row) => {
+              const slug = row.Slug;
+              const photos: string[] = [];
+
+              if (row['Thumbnail Image'] && row['Thumbnail Image'].trim()) {
+                photos.push(convertGoogleDriveUrl(row['Thumbnail Image']));
+              } else if (slug) {
+                const thumbnailPath = detectImagePath(slug, 'thumbnail');
+                if (thumbnailPath) {
+                  photos.push(thumbnailPath);
+                }
+              }
+
+              if (row['Additional Photos'] && row['Additional Photos'].trim()) {
+                const additionalPhotos = row['Additional Photos']
+                  .split(',')
+                  .map((p) => p.trim())
+                  .filter((p) => p)
+                  .map((p) => convertGoogleDriveUrl(p));
+                photos.push(...additionalPhotos);
+              } else if (slug) {
+                for (let i = 1; i <= 25; i++) {
+                  const imagePath = detectImagePath(slug, i.toString());
+                  if (imagePath) {
+                    photos.push(imagePath);
+                  }
+                }
+              }
+
+              const createdAt = row['Created Date']
+                ? new Date(row['Created Date'])
+                : new Date();
+
+              const isNew =
+                row['Is New Listing']?.toUpperCase() === 'TRUE' ||
+                row['Is New Listing'] === '1';
+
+              return {
+                id: row.ID,
+                title: row.Title,
+                county: row.County,
+                state: row.State as 'OH' | 'WV',
+                nearestTown: row['Nearest Town'],
+                acreage: parseFloat(row.Acreage),
+                price: parseFloat(row.Price),
+                isNew,
+                photos,
+                shortDescription: row['Short Description'] || '',
+                overview: row['Full Overview'] || row['Short Description'] || '',
+                roadFrontage: row['Road Frontage']?.trim() || undefined,
+                utilities: row.Utilities?.trim() || undefined,
+                parcelId: row['Parcel ID']?.trim() || undefined,
+                youtubeUrl: row['YouTube URL']?.trim() ? convertYouTubeUrl(row['YouTube URL'].trim()) : undefined,
+                mapEmbedHtml: row['Google Maps Embed']?.trim() || undefined,
+                slug: row.Slug,
+                createdAt,
+              };
+            });
+
+          resolve(listings);
+        } catch (error: unknown) {
+          console.error('❌ Error parsing sheet data:', error);
+          reject(error);
+        }
+      },
+      error: (error: unknown) => {
+        console.error('❌ Error parsing CSV:', error);
+        reject(error);
+      },
+    });
+  });
+}
+
+/**
+ * Fetches listing data from Google Sheets with retry logic, validation, and caching
  *
- * @returns Array of Listing objects parsed from the Google Sheet
+ * Authentication Priority:
+ * 1. Service Account (if GOOGLE_SERVICE_ACCOUNT env var is set)
+ * 2. Public CSV export (fallback)
+ *
+ * Features:
+ * - Exponential backoff retry logic (5 retries max)
+ * - Zod schema validation
+ * - File-based caching with fallback
+ * - Detailed logging
+ *
+ * @returns Array of validated Listing objects
  */
 export async function fetchListingsFromSheet(): Promise<Listing[]> {
-  try {
-    const response = await fetch(SHEET_CSV_URL);
+  console.log('\n📊 Starting Google Sheets data fetch...');
+  console.log('═'.repeat(60));
 
-    if (!response.ok) {
-      console.error('Failed to fetch Google Sheet:', response.statusText);
-      throw new Error(`Failed to fetch sheet: ${response.statusText}`);
+  let listings: Listing[] = [];
+  let dataSource = 'unknown';
+
+  try {
+    // Try Service Account authentication first (if available)
+    if (fetchListingsFromSheetWithAuth) {
+      try {
+        console.log('🔐 Attempting Service Account authentication...');
+        listings = await fetchListingsFromSheetWithAuth();
+        dataSource = 'Service Account API';
+      } catch (authError) {
+        console.warn('⚠️  Service Account auth failed, falling back to public CSV');
+        console.error('   Error:', authError instanceof Error ? authError.message : String(authError));
+
+        // Fallback to public CSV
+        listings = await fetchFromPublicCSV();
+        dataSource = 'Public CSV Export';
+      }
+    } else {
+      // Use public CSV directly
+      listings = await fetchFromPublicCSV();
+      dataSource = 'Public CSV Export';
     }
 
-    const csvText = await response.text();
+    // Validate data with Zod
+    console.log('\n🔍 Validating data...');
+    const validatedListings = validateListings(listings);
 
-    return new Promise((resolve, reject) => {
-      Papa.parse<SheetRow>(csvText, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          try {
-            const listings: Listing[] = results.data
-              .filter((row) => row.ID && row.Title) // Filter out empty rows
-              .map((row) => {
-                const slug = row.Slug;
-                const photos: string[] = [];
+    // Save to cache (if available)
+    if (saveToCache) {
+      console.log('\n💾 Saving to cache...');
+      saveToCache(validatedListings);
+    }
 
-                // AUTO-DETECT IMAGES: If no images specified in Google Sheets,
-                // automatically look for images in /public/images/listings/{slug}/
+    console.log('\n✅ SUCCESS');
+    console.log(`   Source: ${dataSource}`);
+    console.log(`   Listings: ${validatedListings.length}`);
+    console.log('═'.repeat(60) + '\n');
 
-                // Handle thumbnail image
-                if (row['Thumbnail Image'] && row['Thumbnail Image'].trim()) {
-                  // Use image specified in Google Sheet
-                  photos.push(convertGoogleDriveUrl(row['Thumbnail Image']));
-                } else if (slug) {
-                  // Auto-detect: Check which extension exists (.jpeg or .jpg)
-                  const thumbnailPath = detectImagePath(slug, 'thumbnail');
-                  if (thumbnailPath) {
-                    photos.push(thumbnailPath);
-                  }
-                }
+    return validatedListings;
 
-                // Handle additional photos
-                if (row['Additional Photos'] && row['Additional Photos'].trim()) {
-                  // Use images specified in Google Sheet
-                  const additionalPhotos = row['Additional Photos']
-                    .split(',')
-                    .map((p) => p.trim())
-                    .filter((p) => p)
-                    .map((p) => convertGoogleDriveUrl(p));
-                  photos.push(...additionalPhotos);
-                } else if (slug) {
-                  // Auto-detect: Check which numbered images exist (supports both .jpeg and .jpg)
-                  for (let i = 1; i <= 25; i++) {
-                    const imagePath = detectImagePath(slug, i.toString());
-                    if (imagePath) {
-                      photos.push(imagePath);
-                    }
-                  }
-                }
-
-                // Parse the created date
-                const createdAt = row['Created Date']
-                  ? new Date(row['Created Date'])
-                  : new Date();
-
-                // Parse boolean for isNew
-                const isNew =
-                  row['Is New Listing']?.toUpperCase() === 'TRUE' ||
-                  row['Is New Listing'] === '1';
-
-                return {
-                  id: row.ID,
-                  title: row.Title,
-                  county: row.County,
-                  state: row.State as 'OH' | 'WV',
-                  nearestTown: row['Nearest Town'],
-                  acreage: parseFloat(row.Acreage),
-                  price: parseFloat(row.Price),
-                  isNew,
-                  photos,
-                  shortDescription: row['Short Description'] || '',
-                  overview: row['Full Overview'] || row['Short Description'] || '',
-                  roadFrontage: row['Road Frontage']?.trim() || undefined,
-                  utilities: row.Utilities?.trim() || undefined,
-                  parcelId: row['Parcel ID']?.trim() || undefined,
-                  youtubeUrl: row['YouTube URL']?.trim() ? convertYouTubeUrl(row['YouTube URL'].trim()) : undefined,
-                  mapEmbedHtml: row['Google Maps Embed']?.trim() || undefined,
-                  slug: row.Slug,
-                  createdAt,
-                };
-              });
-
-            resolve(listings);
-          } catch (error: unknown) {
-            console.error('Error parsing sheet data:', error);
-            reject(error);
-          }
-        },
-        error: (error: unknown) => {
-          console.error('Error parsing CSV:', error);
-          reject(error);
-        },
-      });
-    });
   } catch (error: unknown) {
-    console.error('Error fetching from Google Sheets:', error);
-    throw error;
+    console.error('\n❌ PRIMARY FETCH FAILED');
+    console.error('   Error:', error instanceof Error ? error.message : String(error));
+
+    // Try to load from cache as last resort (if available)
+    if (loadFromCache) {
+      console.log('\n📂 Attempting to load from cache...');
+      const cachedData = loadFromCache();
+
+      if (cachedData && cachedData.length > 0) {
+        console.log('🔍 Validating cached data...');
+        const validatedCached = validateListings(cachedData);
+
+        console.warn('\n⚠️  USING CACHED DATA (API unavailable)');
+        console.warn(`   Listings: ${validatedCached.length}`);
+        console.warn('═'.repeat(60) + '\n');
+
+        return validatedCached;
+      }
+    }
+
+    // No cache available - fail the build
+    console.error('\n💥 FATAL: No data available (API failed and no cache)');
+    console.error('═'.repeat(60) + '\n');
+    throw new Error(
+      'Failed to fetch Google Sheets data and no cache available. ' +
+      'Build cannot continue without property data.'
+    );
   }
 }
