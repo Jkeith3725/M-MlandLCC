@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:  # Allows manual triggering from GitHub UI
+  workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *'  # Runs daily at 2 AM UTC (9 PM EST)
+    - cron: '0 2 * * *'
 
 permissions:
   contents: read
@@ -33,6 +33,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Pre-build validation
+        env:
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+        run: npm run validate
+
       - name: Build with Next.js
         env:
           NEXT_PUBLIC_USE_GOOGLE_SHEETS: true
@@ -53,3 +58,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
