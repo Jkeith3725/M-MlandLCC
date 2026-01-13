@@ -12,7 +12,7 @@ import Papa from 'papaparse';
 import { withBasePath } from './utils';
 
 const SHEET_ID = '1byRYesF8cokqpOzDRGgIT_hgyrnUUKzguuphUpZh__s';
-const SHEET_NAME = 'Sheet1'; // Default sheet name, adjust if needed
+const SHEET_NAME = 'property-inventory';
 
 // Ensure we're only running server-side
 if (typeof window !== 'undefined') {
