@@ -5,8 +5,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-  schedule:
-    - cron: '0 2 * * *'
 
 permissions:
   contents: read
@@ -33,17 +31,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Pre-build validation (informational)
-        continue-on-error: true
-        env:
-          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
-          NEXT_PUBLIC_USE_GOOGLE_SHEETS: true
-        run: npm run validate
-
       - name: Build with Next.js
-        env:
-          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
-          NEXT_PUBLIC_USE_GOOGLE_SHEETS: true
         run: npm run build
 
       - name: Upload artifact
