@@ -1,6 +1,6 @@
 # M&M Land Company Website
 
-A premium land listing website for properties in Ohio and West Virginia.
+A premium land listing website for properties in Ohio and West Virginia. 
 
 ## ⚠️ IMPORTANT: BasePath for GitHub Pages
 
