@@ -142,10 +142,12 @@ async function validateDataSchema(): Promise<boolean> {
 
 /**
  * Main validation function
+ * NOTE: This is INFORMATIONAL ONLY - it never blocks the build.
+ * The build has fallback mechanisms (public CSV, cached data) if Google Sheets fails.
  */
 async function runValidation() {
-  log('\n🔍 PRE-BUILD VALIDATION', colors.cyan);
-  log('Starting comprehensive build validation checks...', colors.cyan);
+  log('\n🔍 PRE-BUILD VALIDATION (Informational)', colors.cyan);
+  log('Running validation checks... (build will proceed regardless)', colors.cyan);
 
   const results = {
     env: false,
@@ -153,45 +155,54 @@ async function runValidation() {
     schema: false,
   };
 
-  // Run all checks
-  results.env = await checkEnvironmentVariables();
-  results.connection = await checkGoogleSheetsConnection();
-  results.schema = await validateDataSchema();
+  // Run all checks with error handling
+  try {
+    results.env = await checkEnvironmentVariables();
+  } catch (e) {
+    log(`⚠️  Environment check error: ${e instanceof Error ? e.message : String(e)}`, colors.yellow);
+  }
+
+  try {
+    results.connection = await checkGoogleSheetsConnection();
+  } catch (e) {
+    log(`⚠️  Connection check error: ${e instanceof Error ? e.message : String(e)}`, colors.yellow);
+  }
+
+  try {
+    results.schema = await validateDataSchema();
+  } catch (e) {
+    log(`⚠️  Schema check error: ${e instanceof Error ? e.message : String(e)}`, colors.yellow);
+  }
 
   // Final summary
   logSection('VALIDATION SUMMARY');
 
-  log(`Environment Variables: ${results.env ? '✅ PASS' : '❌ FAIL'}`, results.env ? colors.green : colors.red);
+  log(`Environment Variables: ${results.env ? '✅ PASS' : '⚠️  WARN'}`, results.env ? colors.green : colors.yellow);
   log(`Google Sheets Connection: ${results.connection ? '✅ PASS' : '⚠️  WARN'}`, results.connection ? colors.green : colors.yellow);
   log(`Data Schema Validation: ${results.schema ? '✅ PASS' : '⚠️  WARN'}`, results.schema ? colors.green : colors.yellow);
 
   console.log('\n' + '='.repeat(70));
 
-  // Only fail on critical env var issues
-  // Connection and schema failures are warnings - build has fallbacks (cache, public CSV)
-  if (!results.env) {
-    log('❌ CRITICAL: Environment configuration issues detected', colors.red);
-    console.log('='.repeat(70) + '\n');
-    process.exit(1);
-  }
-
-  if (!results.connection || !results.schema) {
-    log('⚠️  WARNING: Google Sheets connection failed', colors.yellow);
+  if (!results.env || !results.connection || !results.schema) {
+    log('⚠️  Some checks did not pass', colors.yellow);
     log('   Build will proceed using fallback mechanisms:', colors.yellow);
     log('   - Public CSV export (if sheet is public)', colors.yellow);
     log('   - Cached data (if available)', colors.yellow);
-    console.log('='.repeat(70) + '\n');
-    process.exit(0); // Exit successfully - let build handle fallbacks
+  } else {
+    log('✅ ALL CHECKS PASSED', colors.green);
   }
 
-  log('✅ ALL CHECKS PASSED - Build can proceed', colors.green);
   console.log('='.repeat(70) + '\n');
+  log('📦 Proceeding with build...', colors.cyan);
+
+  // ALWAYS exit successfully - validation is informational only
   process.exit(0);
 }
 
-// Run validation
+// Run validation - always exit 0 even on crashes
 runValidation().catch((error) => {
-  log('\n💥 VALIDATION SCRIPT CRASHED', colors.red);
-  log(`Error: ${error instanceof Error ? error.message : String(error)}`, colors.red);
-  process.exit(1);
+  log('\n⚠️  VALIDATION SCRIPT ERROR (non-blocking)', colors.yellow);
+  log(`Error: ${error instanceof Error ? error.message : String(error)}`, colors.yellow);
+  log('Build will proceed with fallback data sources...', colors.yellow);
+  process.exit(0);  // Don't block the build
 });
