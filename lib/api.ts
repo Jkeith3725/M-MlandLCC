@@ -1,11 +1,8 @@
 import { Listing, FilterParams, PaginatedListings } from './types';
-import { MOCK_LISTINGS } from './mockData';
+import { fetchListingsFromSheet } from './googleSheets';
 import { delay } from './utils';
 
 const PAGE_SIZE = 9;
-
-// Always use hardcoded listings - no external dependencies
-const getAllListings = (): Listing[] => MOCK_LISTINGS;
 
 export async function getListings(
   filters: FilterParams = {},
@@ -13,7 +10,7 @@ export async function getListings(
 ): Promise<PaginatedListings> {
   await delay(Math.random() * 300 + 300);
 
-  const allListings = getAllListings();
+  const allListings = await fetchListingsFromSheet();
   let filtered = [...allListings];
 
   if (filters.county) {
@@ -74,20 +71,20 @@ export async function getListings(
 
 export async function getListingBySlug(slug: string): Promise<Listing | null> {
   await delay(Math.random() * 200 + 200);
-  const allListings = getAllListings();
+  const allListings = await fetchListingsFromSheet();
   return allListings.find(listing => listing.slug === slug) || null;
 }
 
 export async function getFeaturedListings(count: number = 6): Promise<Listing[]> {
   await delay(Math.random() * 200 + 200);
-  const allListings = getAllListings();
+  const allListings = await fetchListingsFromSheet();
   const sorted = [...allListings].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   return sorted.slice(0, count);
 }
 
 export async function getSimilarListings(currentListing: Listing, count: number = 4): Promise<Listing[]> {
   await delay(Math.random() * 200 + 200);
-  const allListings = getAllListings();
+  const allListings = await fetchListingsFromSheet();
 
   const similar = allListings.filter(listing => {
     if (listing.id === currentListing.id) return false;
