@@ -6,30 +6,24 @@ import { ListingCard } from '@/components/listings/ListingCard';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { getListingBySlug, getSimilarListings } from '@/lib/api';
-import { MOCK_LISTINGS } from '@/lib/mockData';
 import { fetchListingsFromSheet } from '@/lib/googleSheets';
 import { formatPrice, formatAcreage } from '@/lib/utils';
 import { COMPANY_INFO } from '@/lib/constants';
 
 export async function generateStaticParams() {
-  // Check if we should use Google Sheets or mock data
-  const useGoogleSheets = process.env.NEXT_PUBLIC_USE_GOOGLE_SHEETS === 'true';
-
   try {
-    // Fetch listings from the appropriate source
-    const listings = useGoogleSheets
-      ? await fetchListingsFromSheet()
-      : MOCK_LISTINGS;
+    // Always fetch from Google Sheets
+    const listings = await fetchListingsFromSheet();
+
+    console.log(`generateStaticParams: Found ${listings.length} listings`);
 
     return listings.map((listing) => ({
       slug: listing.slug,
     }));
   } catch (error) {
     console.error('Error generating static params:', error);
-    // Fallback to mock data if Google Sheets fails
-    return MOCK_LISTINGS.map((listing) => ({
-      slug: listing.slug,
-    }));
+    // Return empty array - pages will be generated on-demand if needed
+    return [];
   }
 }
 
