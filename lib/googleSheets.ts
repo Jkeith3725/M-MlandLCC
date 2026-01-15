@@ -1,10 +1,9 @@
 import Papa from 'papaparse';
 import { Listing } from './types';
-import { MOCK_LISTINGS } from './mockData';
 
-// Google Sheet ID from your shared link
-const SHEET_ID = '1byRYesF8cokqpOzDRGgIT_hgyrnUUKzguuphUpZh__s';
-const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=property-inventory`;
+// Published Google Sheet CSV URL (File → Share → Publish to web → CSV)
+// This URL is publicly accessible and updated automatically when the sheet changes
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgsyLesTzBWCoAu8l9Bx5zjYYxqf7qYvR8KWa9ddAk2cTRmXK5OPCP5M3ve4ilT5vxjlf3rJHUL4Jq/pub?gid=1534947356&single=true&output=csv';
 
 const BASE_PATH = '/M-MlandLCC';
 
@@ -129,7 +128,6 @@ export async function fetchListingsFromSheet(): Promise<Listing[]> {
     });
   } catch (error) {
     console.error('❌ Failed to fetch from Google Sheet:', error);
-    console.log('📦 Using fallback data...');
-    return MOCK_LISTINGS;
+    throw new Error(`Google Sheet fetch failed: ${error}. Ensure the sheet is published to web (File → Share → Publish to web).`);
   }
 }
