@@ -1,21 +1,8 @@
 import Papa from 'papaparse';
 import { Listing } from './types';
 
-// Google Sheet ID from your shared link
-const SHEET_ID = '1byRYesF8cokqpOzDRGgIT_hgyrnUUKzguuphUpZh__s';
-const SHEET_GID = '1534947356'; // The gid for the property-inventory tab
-
-// Multiple URL formats to try (in order of reliability)
-const SHEET_URLS = [
-  // Export format with specific gid
-  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`,
-  // Export format with gid=0 (first sheet fallback)
-  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`,
-  // Published CSV format
-  `https://docs.google.com/spreadsheets/d/e/2PACX-1vSgsyLesTzBWCoAu8l9Bx5zjYYxqf7qYvR8KWa9ddAk2cTRmXK5OPCP5M3ve4ilT5vxjlf3rJHUL4Jq/pub?gid=${SHEET_GID}&single=true&output=csv`,
-  // gviz format - works when sheet is shared as "anyone with link"
-  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=property-inventory`,
-];
+// Google Sheet CSV export URL - exports first sheet by default
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1byRYesF8cokqpOzDRGgIT_hgyrnUUKzguuphUpZh__s/export?format=csv';
 
 const BASE_PATH = '/M-MlandLCC';
 
@@ -77,37 +64,18 @@ interface SheetRow {
 
 /**
  * Fetches listings from the public Google Sheet CSV export
- * Tries multiple URL formats for maximum reliability
  */
 export async function fetchListingsFromSheet(): Promise<Listing[]> {
-  console.log('📊 Fetching from public Google Sheet...');
+  console.log('📊 Fetching from Google Sheet:', SHEET_CSV_URL);
 
-  let csvText: string | null = null;
-  let lastError: Error | null = null;
+  const response = await fetch(SHEET_CSV_URL);
 
-  // Try each URL format until one works
-  for (const url of SHEET_URLS) {
-    try {
-      console.log(`🔄 Trying URL format: ${url.substring(0, 60)}...`);
-      const response = await fetch(url);
-
-      if (response.ok) {
-        csvText = await response.text();
-        console.log(`✅ Successfully fetched from Google Sheet`);
-        break;
-      } else {
-        console.log(`❌ URL returned HTTP ${response.status}`);
-        lastError = new Error(`HTTP ${response.status}`);
-      }
-    } catch (error) {
-      console.log(`❌ URL failed: ${error}`);
-      lastError = error as Error;
-    }
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Google Sheet: HTTP ${response.status}. Ensure the sheet is shared as "Anyone with the link can view".`);
   }
 
-  if (!csvText) {
-    throw new Error(`All Google Sheet URL formats failed. Last error: ${lastError?.message}. Ensure the sheet is shared as "Anyone with the link can view".`);
-  }
+  const csvText = await response.text();
+  console.log('✅ Successfully fetched CSV data');
 
   return new Promise((resolve, reject) => {
     Papa.parse<SheetRow>(csvText, {
