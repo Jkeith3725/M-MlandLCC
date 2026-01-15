@@ -6,13 +6,13 @@ import { ListingCard } from '@/components/listings/ListingCard';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { getListingBySlug, getSimilarListings } from '@/lib/api';
-import { fetchListingsFromSheet } from '@/lib/googleSheets';
+import { getListingsFromData } from '@/lib/listings';
 import { formatPrice, formatAcreage } from '@/lib/utils';
 import { COMPANY_INFO } from '@/lib/constants';
 
 export async function generateStaticParams() {
-  // Fetch from Google Sheets (falls back to MOCK_LISTINGS if it fails)
-  const listings = await fetchListingsFromSheet();
+  // Read listings from local JSON file
+  const listings = getListingsFromData();
   return listings.map((listing) => ({
     slug: listing.slug,
   }));

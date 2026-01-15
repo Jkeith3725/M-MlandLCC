@@ -1,6 +1,5 @@
 import { Listing, FilterParams, PaginatedListings } from './types';
-import { fetchListingsFromSheet } from './googleSheets';
-import { delay } from './utils';
+import { getListingsFromData } from './listings';
 
 const PAGE_SIZE = 9;
 
@@ -8,9 +7,7 @@ export async function getListings(
   filters: FilterParams = {},
   page: number = 1
 ): Promise<PaginatedListings> {
-  await delay(Math.random() * 300 + 300);
-
-  const allListings = await fetchListingsFromSheet();
+  const allListings = getListingsFromData();
   let filtered = [...allListings];
 
   if (filters.county) {
@@ -70,21 +67,18 @@ export async function getListings(
 }
 
 export async function getListingBySlug(slug: string): Promise<Listing | null> {
-  await delay(Math.random() * 200 + 200);
-  const allListings = await fetchListingsFromSheet();
+  const allListings = getListingsFromData();
   return allListings.find(listing => listing.slug === slug) || null;
 }
 
 export async function getFeaturedListings(count: number = 6): Promise<Listing[]> {
-  await delay(Math.random() * 200 + 200);
-  const allListings = await fetchListingsFromSheet();
+  const allListings = getListingsFromData();
   const sorted = [...allListings].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   return sorted.slice(0, count);
 }
 
 export async function getSimilarListings(currentListing: Listing, count: number = 4): Promise<Listing[]> {
-  await delay(Math.random() * 200 + 200);
-  const allListings = await fetchListingsFromSheet();
+  const allListings = getListingsFromData();
 
   const similar = allListings.filter(listing => {
     if (listing.id === currentListing.id) return false;
@@ -95,3 +89,6 @@ export async function getSimilarListings(currentListing: Listing, count: number 
 
   return similar.slice(0, count);
 }
+
+// Export for backwards compatibility
+export { getListingsFromData as fetchListingsFromSheet } from './listings';
