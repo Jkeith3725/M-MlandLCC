@@ -113,6 +113,44 @@
       "youtubeUrl": "",
       "mapEmbedHtml": "https://id.land/ranching/maps/8eb2134ee064dfd975bf08b59b38451b/share",
       "createdAt": "2026-01-15"
+    },
+    {
+      "id": "7",
+      "title": "Brooks Rd Lot 1 - 128 Acres in Washington County, OH",
+      "slug": "128-acres-washington-county-oh",
+      "county": "Washington",
+      "state": "OH",
+      "nearestTown": "Reno",
+      "acreage": 128,
+      "price": 349900,
+      "isNew": true,
+      "shortDescription": "Exceptional 128-acre woodland retreat in Washington County offering ultimate privacy off a quiet gravel road. Bordering Wayne National Forest with direct access to trophy muskie fishing on the Little Muskingum River, this is a true outdoorsman's paradise.",
+      "overview": "Own 128 acres of pristine Appalachian wilderness in Washington County, Ohio. Tucked away off a quiet gravel road in Lawrence Township, this property delivers the kind of seclusion most landowners only dream of—minimal road traffic and neighbors few and far between. The location transforms this from a simple land purchase into a gateway for endless outdoor adventures. With direct access to hundreds of acres of Wayne National Forest, you'll enjoy unlimited hiking, exploring, and wildlife observation right from your doorstep. The nearby Little Muskingum River is renowned for trophy muskie and exceptional smallmouth bass fishing. Hunters will find abundant whitetail deer, wild turkey, and small game throughout the heavily wooded terrain, with vast surrounding public lands extending your hunting grounds exponentially. Whether you envision building a secluded cabin retreat, establishing a family hunting camp, or preserving your own piece of wilderness, this property delivers on every front.",
+      "roadFrontage": "",
+      "utilities": "Well/septic needed",
+      "parcelId": "",
+      "youtubeUrl": "",
+      "mapEmbedHtml": "",
+      "createdAt": "2026-01-18"
+    },
+    {
+      "id": "8",
+      "title": "Brooks Rd Lot 3 - 34 Acres in Washington County, OH",
+      "slug": "34-acres-washington-county-oh",
+      "county": "Washington",
+      "state": "OH",
+      "nearestTown": "Reno",
+      "acreage": 34,
+      "price": 135900,
+      "isNew": true,
+      "shortDescription": "Secluded 34-acre wooded retreat in Washington County featuring established trails and a completed select timber harvest. Borders Wayne National Forest for expanded hunting and recreation opportunities.",
+      "overview": "Discover the perfect canvas for your private retreat—34 acres of secluded woodland in Washington County, Ohio. This remarkable property offers an outstanding combination of size, location, and natural beauty for those seeking their own escape from everyday life. The land features an extensive network of trails and roads throughout the acreage, providing easy access to every corner from day one. Previous owners completed a select timber harvest, resulting in a well-managed woodland that promotes healthy forest growth while maintaining the natural character of the landscape—ready for your enjoyment without extensive initial work. Bordering Wayne National Forest instantly expands your recreational options to include hundreds of acres of public land for hiking, exploring, and hunting. The surrounding area is a true hunting paradise teeming with whitetail deer, wild turkey, and abundant small game. The remote setting off a quiet gravel road ensures minimal disturbance, creating an ideal environment for wildlife observation and outdoor pursuits.",
+      "roadFrontage": "",
+      "utilities": "Well/septic needed",
+      "parcelId": "",
+      "youtubeUrl": "",
+      "mapEmbedHtml": "",
+      "createdAt": "2026-01-18"
     }
   ]
 }
