@@ -11,13 +11,13 @@ interface ListingCardProps {
 
 export function ListingCard({ listing }: ListingCardProps) {
   return (
-    <article className="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-brown-dark/5 hover:border-tan-accent/50 flex flex-col h-full cursor-pointer transform hover:-translate-y-1">
+    <article className="group relative bg-white overflow-hidden shadow-soft hover:shadow-strong transition-all duration-500 flex flex-col h-full cursor-pointer hover:-translate-y-1">
       <Link href={`/listings/${listing.slug}`} className="absolute inset-0 z-10">
         <span className="sr-only">View {listing.title}</span>
       </Link>
 
       {/* Image Container */}
-      <div className="relative w-full pt-[66.67%] overflow-hidden bg-gradient-to-br from-tan-accent/20 to-forest-500/20">
+      <div className="relative w-full pt-[62%] overflow-hidden bg-cream-dark">
         {listing.photos?.[0] ? (
           <>
             <Image
@@ -25,60 +25,54 @@ export function ListingCard({ listing }: ListingCardProps) {
               alt={listing.title}
               fill
               loading="lazy"
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
-            {/* Subtle overlay on hover */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-brown-dark/50 via-transparent to-transparent" />
           </>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-400">
-            <span className="text-sm font-medium">No Image</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-cream-dark text-brown-dark/40">
+            <span className="text-sm font-medium tracking-wide uppercase">No Image</span>
           </div>
         )}
 
+        {/* Price overlay */}
+        <div className="absolute bottom-4 left-5 z-20">
+          <p className="text-2xl font-serif font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">{formatPrice(listing.price)}</p>
+        </div>
+
         {/* Badges Overlay */}
-        <div className="absolute top-4 right-4 flex flex-col gap-2 items-end z-20 pointer-events-none">
+        <div className="absolute top-4 left-5 flex flex-col gap-2 z-20 pointer-events-none">
           {listing.isNew && (
-            <Badge className="bg-tan-accent text-brown-dark font-bold border-none shadow-sm">New Listing</Badge>
+            <Badge className="bg-tan-accent text-brown-dark text-[10px] font-bold uppercase tracking-widest border-none px-3 py-1">New</Badge>
           )}
         </div>
       </div>
 
-      <div className="p-7 flex flex-col flex-grow bg-gradient-to-b from-white to-cream/30">
-        {/* Header */}
-        <div className="mb-5 space-y-3">
-          <h3 className="text-xl font-bold text-brown-dark leading-tight group-hover:text-forest-500 transition-colors line-clamp-2">
-            {listing.title}
-          </h3>
+      <div className="p-6 flex flex-col flex-grow">
+        {/* Title */}
+        <h3 className="text-lg font-serif font-bold text-brown-dark leading-snug group-hover:text-forest-500 transition-colors line-clamp-2 mb-3">
+          {listing.title}
+        </h3>
 
-          <div className="flex items-center text-brown-dark/60 text-sm font-medium">
-            <svg className="w-4 h-4 mr-2 text-tan-accent flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        {/* Location & Acreage */}
+        <div className="flex items-center justify-between text-brown-dark/60 text-sm mt-auto pt-4 border-t border-cream-dark">
+          <div className="flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 text-tan-accent flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <span className="truncate">{listing.county} County, {listing.state}</span>
           </div>
+          <span className="font-semibold text-brown-dark whitespace-nowrap">{formatAcreage(listing.acreage)}</span>
         </div>
 
-        {/* Specs Grid */}
-        <div className="grid grid-cols-2 gap-6 py-6 px-4 bg-cream/50 rounded-lg border border-brown-dark/5 mt-auto">
-          <div>
-            <p className="text-[10px] uppercase tracking-widest text-brown-dark/50 font-bold mb-2">Price</p>
-            <p className="text-2xl font-bold text-forest-500">{formatPrice(listing.price)}</p>
-          </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-widest text-brown-dark/50 font-bold mb-2">Acreage</p>
-            <p className="text-2xl font-bold text-brown-dark">{formatAcreage(listing.acreage)}</p>
-          </div>
-        </div>
-
-        {/* Enhanced Footer Action */}
-        <div className="pt-5 flex justify-end">
-          <span className="text-sm font-bold text-tan-accent group-hover:text-forest-500 group-hover:translate-x-2 transition-all duration-300 inline-flex items-center">
+        {/* Footer Action */}
+        <div className="pt-4 flex items-center">
+          <span className="text-xs font-semibold text-tan-accent uppercase tracking-widest group-hover:text-forest-500 transition-colors inline-flex items-center">
             View Details
-            <svg className="w-5 h-5 ml-2 group-hover:ml-3 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </span>
         </div>

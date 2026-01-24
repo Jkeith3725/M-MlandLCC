@@ -4,9 +4,6 @@ import { Navbar } from '@/components/layout/Navbar';
 import { FooterWrapper } from '@/components/layout/FooterWrapper';
 import { OrganizationSchema } from '@/components/seo/OrganizationSchema';
 
-// Using system fonts to avoid build failures with Google Fonts
-const inter = { className: 'font-sans' };
-
 const SITE_URL = 'https://mmlandsales.com';
 
 export const metadata: Metadata = {
@@ -65,7 +62,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+      </head>
+      <body>
         <OrganizationSchema />
         <div className="flex flex-col min-h-screen">
           <Navbar />

@@ -4,65 +4,49 @@
 
 @layer base {
   :root {
-    /* Brand Palette mappings to existing variables if needed, or straight usage */
     --background: #F6F2EA;
     --foreground: #2B1D14;
+  }
 
-    /* Keeping these for backward compatibility if components use them, but updating values to match palette where it makes sense */
-    --forest-50: #f0f7f0;
-    --forest-100: #d9ead9;
-    --forest-200: #b3d5b3;
-    --forest-300: #8cc08c;
-    --forest-400: #66ab66;
-    --forest-500: #1F4D2B;
-    /* Brand Forest Green */
-    --forest-600: #193e23;
-    --forest-700: #14301b;
-    --forest-800: #0f2314;
-    --forest-900: #09150c;
-
-    --earth-50: #f9f5f0;
-    --earth-100: #f0e6d9;
-    --earth-200: #e0ccb3;
-    --earth-300: #C8A26A;
-    /* Brand Accent Tan */
-    --earth-400: #b08d5a;
-    --earth-500: #98784a;
-    --earth-600: #7f633b;
-    --earth-700: #664f2e;
-    --earth-800: #4d3b22;
-    --earth-900: #2B1D14;
-    /* Brand Dark Brown */
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
     background-color: var(--background);
     color: var(--foreground);
     position: relative;
-    font-family: var(--font-sans);
-    font-size: clamp(1rem, 2vw, 1.125rem);
-    /* 16px - 18px */
-    line-height: 1.6;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
+    line-height: 1.7;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
 
   h1 {
-    font-family: var(--font-serif);
     font-weight: 700;
-    line-height: 1.1;
-    /* Mobile: 32px (2rem), Desktop: 56px (3.5rem) */
-    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.05;
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
   }
 
   h2 {
-    font-family: var(--font-serif);
-    font-weight: 700;
-    line-height: 1.2;
-    /* 28px (1.75rem) - 32px (2rem) */
-    font-size: clamp(1.75rem, 3vw, 2rem);
+    line-height: 1.15;
+    font-size: clamp(1.875rem, 3.5vw, 2.5rem);
   }
 
+  h3 {
+    line-height: 1.2;
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+  }
 
-  /* Subtle grain/noise overlay */
+  /* Subtle paper grain texture */
   body::before {
     content: "";
     position: fixed;
@@ -72,7 +56,7 @@
     height: 100%;
     pointer-events: none;
     z-index: 50;
-    opacity: 0.03;
+    opacity: 0.02;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 }
@@ -87,7 +71,6 @@
       transform: translateX(100%);
       opacity: 0;
     }
-
     to {
       transform: translateX(0);
       opacity: 1;
@@ -99,37 +82,59 @@
   }
 
   @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Staggered reveal animations */
+  .animate-reveal {
+    animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-reveal-delay-1 {
+    animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  }
+
+  .animate-reveal-delay-2 {
+    animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  }
+
+  .animate-reveal-delay-3 {
+    animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+  }
+
+  @keyframes reveal {
     from {
       opacity: 0;
+      transform: translateY(24px);
     }
-
     to {
       opacity: 1;
+      transform: translateY(0);
     }
   }
 }
 
-/* Custom scrollbar styles */
+/* Refined scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #F6F2EA;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2d6b2d;
-  border-radius: 5px;
+  background: #C8A26A;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1f4a1f;
+  background: #b08d5a;
 }
 
 /* Focus visible for accessibility */
 *:focus-visible {
   outline: 2px solid #1F4D2B;
-  /* Forest Green for visibility */
   outline-offset: 2px;
 }
