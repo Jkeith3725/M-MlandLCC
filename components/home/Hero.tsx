@@ -15,12 +15,14 @@ export function Hero() {
     >
       {/* Background Layer Group */}
       <div className="absolute inset-0 z-0 bg-[#09150c]">
-        {/* Base Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105"
-          style={{ backgroundImage: 'url(/images/hero-background.jpg)' }}
-          role="img"
-          aria-label="Scenic rural land property"
+        {/* Base Image - using img with fetchPriority for optimal LCP */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/hero-background.jpg"
+          alt="Scenic rural land property"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover transform scale-105"
         />
 
         {/* Subtle Dark Overlay for overall readability */}

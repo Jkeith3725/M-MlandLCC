@@ -150,7 +150,8 @@ export default async function ListingDetailPage({ params }: { params: { slug: st
                       src={listing.youtubeUrl}
                       title="Property Video"
                       className="absolute inset-0 w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      loading="lazy"
+                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
                   </div>
