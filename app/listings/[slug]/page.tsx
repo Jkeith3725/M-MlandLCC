@@ -1,7 +1,5 @@
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
 import { PhotoGallery } from '@/components/listings/PhotoGallery';
 import { ListingCard } from '@/components/listings/ListingCard';
 import { Button } from '@/components/ui/Button';
@@ -83,19 +81,15 @@ export default async function ListingDetailPage({ params }: { params: { slug: st
 
   if (!listing) {
     return (
-      <>
-        <Navbar />
-        <main className="pt-24 pb-20">
-          <div className="max-w-8xl mx-auto px-6 lg:px-12 text-center py-20">
-            <h1 className="text-4xl font-serif font-bold text-brown-dark mb-4">Listing Not Found</h1>
-            <p className="text-gray-700 mb-8">The property you&apos;re looking for doesn&apos;t exist or has been sold.</p>
-            <a href="/listings">
-              <Button variant="primary">View All Listings</Button>
-            </a>
-          </div>
-        </main>
-        <Footer />
-      </>
+      <div className="pt-28 pb-24">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center py-20">
+          <h1 className="text-4xl font-serif font-bold text-brown-dark mb-4">Listing Not Found</h1>
+          <p className="text-brown-dark/60 mb-8">The property you&apos;re looking for doesn&apos;t exist or has been sold.</p>
+          <a href="/listings">
+            <Button variant="primary" className="bg-forest-500 hover:bg-forest-600 text-white rounded-none py-3 px-8 text-xs uppercase tracking-widest font-semibold">View All Listings</Button>
+          </a>
+        </div>
+      </div>
     );
   }
 
@@ -104,9 +98,8 @@ export default async function ListingDetailPage({ params }: { params: { slug: st
   return (
     <>
       <PropertySchema listing={listing} />
-      <Navbar />
 
-      <main className="pt-28 pb-24">
+      <div className="pt-28 pb-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
             {/* Main Content */}
@@ -297,9 +290,7 @@ export default async function ListingDetailPage({ params }: { params: { slug: st
             </div>
           )}
         </div>
-      </main>
-
-      <Footer />
+      </div>
     </>
   );
 }
