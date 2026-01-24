@@ -1,20 +1,81 @@
 import Image from 'next/image';
+import type { Metadata } from 'next';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { PhotoGallery } from '@/components/listings/PhotoGallery';
 import { ListingCard } from '@/components/listings/ListingCard';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { PropertySchema } from '@/components/seo/PropertySchema';
 import { getListingBySlug, getSimilarListings } from '@/lib/api';
 import { getListingsFromData } from '@/lib/listings';
 import { formatPrice, formatAcreage } from '@/lib/utils';
 import { COMPANY_INFO } from '@/lib/constants';
+
+const SITE_URL = 'https://mmlandsales.com';
 
 export async function generateStaticParams() {
   const listings = getListingsFromData();
   return listings.map((listing) => ({
     slug: listing.slug,
   }));
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const listing = await getListingBySlug(params.slug);
+
+  if (!listing) {
+    return {
+      title: 'Listing Not Found',
+    };
+  }
+
+  const stateName = listing.state === 'OH' ? 'Ohio' : 'West Virginia';
+  const title = `${listing.acreage} Acres for Sale in ${listing.county} County, ${stateName}`;
+  const description = listing.shortDescription.length > 160
+    ? listing.shortDescription.substring(0, 157) + '...'
+    : listing.shortDescription;
+  const url = `${SITE_URL}/listings/${listing.slug}`;
+  const image = listing.photos.length > 0
+    ? `${SITE_URL}${listing.photos[0]}`
+    : `${SITE_URL}/images/og-default.jpg`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      `${listing.acreage} acres for sale`,
+      `land for sale ${listing.county} County`,
+      `${stateName} land`,
+      'hunting land',
+      'recreational property',
+      listing.nearestTown ? `land near ${listing.nearestTown}` : '',
+      `${listing.county} County ${stateName} land`,
+    ].filter(Boolean),
+    openGraph: {
+      type: 'article',
+      url,
+      title,
+      description,
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: listing.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image],
+    },
+    alternates: {
+      canonical: url,
+    },
+  };
 }
 
 export default async function ListingDetailPage({ params }: { params: { slug: string } }) {
@@ -42,6 +103,7 @@ export default async function ListingDetailPage({ params }: { params: { slug: st
 
   return (
     <>
+      <PropertySchema listing={listing} />
       <Navbar />
 
       <main className="pt-24 pb-20">
