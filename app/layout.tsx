@@ -2,14 +2,60 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { FooterWrapper } from '@/components/layout/FooterWrapper';
+import { OrganizationSchema } from '@/components/seo/OrganizationSchema';
 
 // Using system fonts to avoid build failures with Google Fonts
 const inter = { className: 'font-sans' };
 
+const SITE_URL = 'https://mmlandsales.com';
+
 export const metadata: Metadata = {
-  title: 'M&M Land Company - Land for Sale in Ohio & West Virginia',
-  description: 'Your trusted partner in buying and selling quality land across Ohio and West Virginia. Expert service, fair prices, and local knowledge.',
-  keywords: 'land for sale, Ohio land, West Virginia land, hunting land, recreational property, M&M Land Company',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'M&M Land Company - Land for Sale in Ohio & West Virginia',
+    template: '%s | M&M Land Company',
+  },
+  description: 'Your trusted partner in buying and selling quality hunting, timber, and recreational land across Ohio and West Virginia. Expert service, fair prices, and local knowledge.',
+  keywords: ['land for sale', 'Ohio land', 'West Virginia land', 'hunting land', 'recreational property', 'timber land', 'M&M Land Company', 'rural property', 'acreage for sale', 'hunting property Ohio', 'land for sale West Virginia'],
+  authors: [{ name: 'M&M Land Company' }],
+  creator: 'M&M Land Company',
+  publisher: 'M&M Land Company',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: SITE_URL,
+    siteName: 'M&M Land Company',
+    title: 'M&M Land Company - Land for Sale in Ohio & West Virginia',
+    description: 'Your trusted partner in buying and selling quality hunting, timber, and recreational land across Ohio and West Virginia.',
+    images: [
+      {
+        url: '/images/og-default.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'M&M Land Company - Premium Land in Ohio & West Virginia',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'M&M Land Company - Land for Sale in Ohio & West Virginia',
+    description: 'Your trusted partner in buying and selling quality hunting, timber, and recreational land across Ohio and West Virginia.',
+    images: ['/images/og-default.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
 };
 
 export default function RootLayout({
@@ -20,6 +66,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <OrganizationSchema />
         <div className="flex flex-col min-h-screen">
           <Navbar />
           <main className="flex-grow">{children}</main>
