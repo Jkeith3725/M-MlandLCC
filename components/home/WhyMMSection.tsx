@@ -39,32 +39,30 @@ export function WhyMMSection() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-forest-500 via-forest-600 to-forest-700 relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-tan-accent rounded-full filter blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-cream rounded-full filter blur-3xl" />
-      </div>
+    <section className="py-20 md:py-32 bg-forest-900 relative overflow-hidden">
+      {/* Subtle radial gradient */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-forest-700/30 via-transparent to-transparent" />
 
-      <div className="container max-w-7xl mx-auto px-4 relative z-10">
+      <div className="container max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-serif">Why Choose M&M Land Company?</h2>
-          <p className="text-xl md:text-2xl text-cream/90 max-w-3xl mx-auto">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-tan-accent mb-4">Why Us</p>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-cream mb-6">Why Choose M&M Land Company?</h2>
+          <p className="text-lg text-cream/60 max-w-2xl mx-auto">
             We bring decades of experience and a genuine commitment to every transaction
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {benefits.map((benefit, index) => (
             <div
               key={index}
-              className="text-center p-8 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 hover:border-tan-accent transition-all duration-500 hover:scale-105 group"
+              className="text-center p-8 border border-cream/10 hover:border-tan-accent/40 transition-all duration-500 group"
             >
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-tan-accent text-brown-dark rounded-full mb-6 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+              <div className="inline-flex items-center justify-center w-14 h-14 text-tan-accent mb-6 group-hover:scale-110 transition-transform duration-300">
                 {benefit.icon}
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">{benefit.title}</h3>
-              <p className="text-cream/80 leading-relaxed">{benefit.description}</p>
+              <h3 className="text-lg font-serif font-bold text-cream mb-3">{benefit.title}</h3>
+              <p className="text-cream/50 text-sm leading-relaxed">{benefit.description}</p>
             </div>
           ))}
         </div>

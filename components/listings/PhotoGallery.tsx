@@ -46,6 +46,7 @@ export function PhotoGallery({ photos, title }: PhotoGalleryProps) {
               src={image}
               alt={`${title} - Photo ${index + 1}`}
               fill
+              loading="lazy"
               className="object-cover"
               sizes="(max-width: 768px) 50vw, 33vw"
             />
