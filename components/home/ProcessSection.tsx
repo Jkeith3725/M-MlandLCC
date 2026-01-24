@@ -23,50 +23,53 @@ export function ProcessSection() {
   ];
 
   return (
-    <section className="py-20 md:py-32 bg-white text-brown-dark relative">
+    <section className="py-20 md:py-32 bg-forest-900 text-cream relative overflow-hidden">
+      {/* Subtle background accent */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-tan-accent/5 to-transparent pointer-events-none" />
+
       <div className="container max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-tan-accent mb-4">The Process</p>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-brown-dark mb-4">How It Works</h2>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-cream mb-4">How It Works</h2>
           <div className="w-16 h-[2px] bg-tan-accent mx-auto" />
-          <p className="mt-6 text-base text-brown-dark/60 max-w-lg mx-auto">
+          <p className="mt-6 text-base text-cream/60 max-w-lg mx-auto">
             From browsing to closing, we make land ownership simple
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-20 relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 relative">
           {/* Connector Line (Desktop) */}
-          <div className="hidden md:block absolute top-[40px] left-[20%] right-[20%] h-[1px] bg-cream-dark -z-0" />
+          <div className="hidden md:block absolute top-[40px] left-[20%] right-[20%] h-[1px] bg-cream/15 -z-0" />
 
           {/* Step 1 */}
           <div className="relative text-center group z-10">
-            <div className="w-20 h-20 mx-auto mb-8 border border-tan-accent/30 rounded-full flex items-center justify-center bg-white group-hover:border-tan-accent transition-colors duration-300">
-              <span className="text-3xl font-serif font-bold text-tan-accent">1</span>
+            <div className="w-20 h-20 mx-auto mb-8 bg-tan-accent rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(200,162,106,0.3)] group-hover:shadow-[0_6px_28px_rgba(200,162,106,0.5)] group-hover:scale-110 transition-all duration-300">
+              <span className="text-2xl font-serif font-bold text-brown-dark">1</span>
             </div>
-            <h3 className="text-xl font-serif font-bold mb-3 text-brown-dark">Browse Listings</h3>
-            <p className="text-brown-dark/55 text-sm leading-relaxed max-w-[250px] mx-auto">
+            <h3 className="text-xl font-serif font-bold mb-3 text-cream">Browse Listings</h3>
+            <p className="text-cream/55 text-sm leading-relaxed max-w-[250px] mx-auto">
               Explore our curated selection of premium land in Ohio and West Virginia.
             </p>
           </div>
 
           {/* Step 2 */}
           <div className="relative text-center group z-10">
-            <div className="w-20 h-20 mx-auto mb-8 border border-tan-accent/30 rounded-full flex items-center justify-center bg-white group-hover:border-tan-accent transition-colors duration-300">
-              <span className="text-3xl font-serif font-bold text-tan-accent">2</span>
+            <div className="w-20 h-20 mx-auto mb-8 bg-tan-accent rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(200,162,106,0.3)] group-hover:shadow-[0_6px_28px_rgba(200,162,106,0.5)] group-hover:scale-110 transition-all duration-300">
+              <span className="text-2xl font-serif font-bold text-brown-dark">2</span>
             </div>
-            <h3 className="text-xl font-serif font-bold mb-3 text-brown-dark">Request Info</h3>
-            <p className="text-brown-dark/55 text-sm leading-relaxed max-w-[250px] mx-auto">
+            <h3 className="text-xl font-serif font-bold mb-3 text-cream">Request Info</h3>
+            <p className="text-cream/55 text-sm leading-relaxed max-w-[250px] mx-auto">
               See something you like? Reach out instantly for maps, drone footage, and details.
             </p>
           </div>
 
           {/* Step 3 */}
           <div className="relative text-center group z-10">
-            <div className="w-20 h-20 mx-auto mb-8 border border-tan-accent/30 rounded-full flex items-center justify-center bg-white group-hover:border-tan-accent transition-colors duration-300">
-              <span className="text-3xl font-serif font-bold text-tan-accent">3</span>
+            <div className="w-20 h-20 mx-auto mb-8 bg-tan-accent rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(200,162,106,0.3)] group-hover:shadow-[0_6px_28px_rgba(200,162,106,0.5)] group-hover:scale-110 transition-all duration-300">
+              <span className="text-2xl font-serif font-bold text-brown-dark">3</span>
             </div>
-            <h3 className="text-xl font-serif font-bold mb-3 text-brown-dark">Close with Confidence</h3>
-            <p className="text-brown-dark/55 text-sm leading-relaxed max-w-[250px] mx-auto">
+            <h3 className="text-xl font-serif font-bold mb-3 text-cream">Close with Confidence</h3>
+            <p className="text-cream/55 text-sm leading-relaxed max-w-[250px] mx-auto">
               We guide you through offers, inspections, and closing. A smooth transaction.
             </p>
           </div>
