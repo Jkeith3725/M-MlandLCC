@@ -4,7 +4,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/M-MlandLCC',
+    // basePath: '/M-MlandLCC', // Commented out for custom domain support,
   webpack: (config, { isServer }) => {
     // Don't bundle Node.js modules for client-side
     if (!isServer) {
