@@ -36,7 +36,12 @@ export function Hero() {
       <div className="relative z-10 container mx-auto px-6 text-center">
         <div className="max-w-4xl mx-auto">
           {/* Decorative accent line */}
-          <div className="w-12 h-[2px] bg-tan-accent mx-auto mb-8 animate-reveal" aria-hidden="true" />
+          <div className="w-12 h-[2px] bg-tan-accent mx-auto mb-6 animate-reveal" aria-hidden="true" />
+
+          {/* Brand Name - Large & Memorable */}
+          <p className="text-sm sm:text-base uppercase tracking-[0.3em] text-tan-accent font-semibold mb-6 animate-reveal drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">
+            M&M Land Company
+          </p>
 
           {/* Main Headline */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-serif font-bold text-cream leading-[0.95] tracking-tight animate-reveal-delay-1">
