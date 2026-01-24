@@ -18,7 +18,7 @@ export function Hero() {
         {/* Base Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105"
-          style={{ backgroundImage: 'url(/M-MlandLCC/images/hero-background.jpg)' }}
+          style={{ backgroundImage: 'url(/images/hero-background.jpg)' }}
           role="img"
           aria-label="Scenic rural land property"
         />

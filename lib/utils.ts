@@ -81,7 +81,7 @@ export function withBasePath(path: string): string {
     return path;
   }
 
-  const basePath = '/M-MlandLCC';
+  const basePath = '';
 
   // Don't add if already has basePath
   if (path.startsWith(basePath)) {
