@@ -1,7 +1,7 @@
 import { Listing } from './types';
 import listingsData from '@/data/listings.json';
 
-const BASE_PATH = '/M-MlandLCC';
+const BASE_PATH = '';
 
 /**
  * Detects which image files exist for a listing and returns their paths
