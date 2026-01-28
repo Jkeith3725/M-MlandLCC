@@ -5,6 +5,7 @@ import { ListingCard } from '@/components/listings/ListingCard';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { PropertySchema } from '@/components/seo/PropertySchema';
+import { ListingViewTracker } from '@/components/analytics/ListingViewTracker';
 import { getListingBySlug, getSimilarListings } from '@/lib/api';
 import { getListingsFromData } from '@/lib/listings';
 import { formatPrice, formatAcreage } from '@/lib/utils';
@@ -98,6 +99,11 @@ export default async function ListingDetailPage({ params }: { params: { slug: st
   return (
     <>
       <PropertySchema listing={listing} />
+      <ListingViewTracker
+        listingId={listing.id}
+        listingTitle={listing.title}
+        listingPrice={listing.price}
+      />
 
       <div className="pt-28 pb-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">

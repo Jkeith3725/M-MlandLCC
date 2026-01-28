@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/hooks/useToast';
 import { submitContactForm } from '@/lib/formSubmission';
+import { trackLead } from '@/lib/analytics';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -38,6 +39,20 @@ export function ContactModal({ isOpen, onClose, listingTitle }: ContactModalProp
       });
 
       if (result.success) {
+        // Track Lead event with Meta Pixel
+        const [firstName, ...lastNameParts] = formData.name.split(' ');
+        const lastName = lastNameParts.join(' ');
+        
+        trackLead(
+          listingTitle ? `Property Inquiry: ${listingTitle}` : 'Contact Form Submission',
+          {
+            em: formData.email,
+            ph: formData.phone,
+            fn: firstName,
+            ln: lastName,
+          }
+        );
+
         showToast('Message sent successfully! We will contact you soon.', 'success');
         setFormData({ name: '', email: '', phone: '', message: '' });
         onClose();

@@ -1,0 +1,33 @@
+Add Meta Pixel implementation for Facebook ad tracking
+
+This commit adds comprehensive Meta Pixel (Facebook Pixel) tracking to the website.
+
+New Features:
+- Automatic PageView tracking on all pages and route changes
+- ViewContent tracking on property listing pages
+- Lead tracking on contact form submissions
+- Contact tracking on phone/email link clicks
+- TypeScript type safety for all tracking functions
+- Advanced Matching support for improved attribution
+
+Files Added:
+- types/global.d.ts - TypeScript declarations for Meta Pixel
+- components/analytics/FacebookPixel.tsx - Core pixel component
+- components/analytics/ListingViewTracker.tsx - Property view tracking
+- components/analytics/ContactLink.tsx - Contact link tracking
+- lib/analytics.ts - Tracking utility functions
+
+Files Modified:
+- app/layout.tsx - Added FacebookPixel component
+- app/listings/[slug]/page.tsx - Added ViewContent tracking
+- components/forms/ContactModal.tsx - Added Lead tracking
+- components/forms/SellLandModal.tsx - Added Lead tracking
+- tsconfig.json - Added types directory
+- .env.local.example - Added NEXT_PUBLIC_FACEBOOK_PIXEL_ID
+
+Setup Required:
+1. Create Meta Pixel in Events Manager
+2. Add NEXT_PUBLIC_FACEBOOK_PIXEL_ID to .env.local
+3. Deploy and verify with Meta Pixel Helper
+
+See IMPLEMENTATION_SUMMARY.md for complete details.

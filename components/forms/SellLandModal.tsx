@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/useToast';
 import { ALL_COUNTIES, STATES } from '@/lib/constants';
 import { SellLandFormData } from '@/lib/types';
 import { submitSellLandForm } from '@/lib/formSubmission';
+import { trackLead } from '@/lib/analytics';
 
 interface SellLandModalProps {
   isOpen: boolean;
@@ -49,6 +50,17 @@ export function SellLandModal({ isOpen, onClose }: SellLandModalProps) {
       });
 
       if (result.success) {
+        // Track Lead event with Meta Pixel
+        const [firstName, ...lastNameParts] = formData.name.split(' ');
+        const lastName = lastNameParts.join(' ');
+        
+        trackLead('Sell Land Form Submission', {
+          em: formData.email,
+          ph: formData.phone,
+          fn: firstName,
+          ln: lastName,
+        });
+
         showToast('Thank you! We will review your property and contact you soon.', 'success');
         setFormData({
           name: '',

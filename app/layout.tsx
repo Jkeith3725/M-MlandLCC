@@ -3,6 +3,7 @@ import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { FooterWrapper } from '@/components/layout/FooterWrapper';
 import { OrganizationSchema } from '@/components/seo/OrganizationSchema';
+import { FacebookPixel } from '@/components/analytics/FacebookPixel';
 
 const SITE_URL = 'https://mmlandsales.com';
 
@@ -68,6 +69,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
       </head>
       <body>
+        <FacebookPixel />
         <OrganizationSchema />
         <div className="flex flex-col min-h-screen">
           <Navbar />
