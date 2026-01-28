@@ -8,23 +8,21 @@
  * - Loads pixel script with optimal performance (afterInteractive strategy)
  * - Automatically tracks PageView events on client-side navigation
  * - Supports noscript fallback for users with JavaScript disabled
- * - Uses environment variable for Pixel ID
- * 
- * Setup:
- * 1. Add NEXT_PUBLIC_FACEBOOK_PIXEL_ID to your .env.local file
- * 2. Import this component in your app/layout.tsx
- * 3. Place it inside the <body> tag
+ * - Configured for GitHub Pages static hosting
  * 
  * @see https://developers.facebook.com/docs/meta-pixel/
  */
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import Script from 'next/script';
 
-export function FacebookPixel() {
+// Meta Pixel ID for M&M Land Company
+const PIXEL_ID = '918738147365569';
+
+function PageViewTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -35,14 +33,10 @@ export function FacebookPixel() {
     }
   }, [pathname, searchParams]);
 
-  // Only load pixel in production or if explicitly enabled
-  const pixelId = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
-  
-  if (!pixelId) {
-    console.warn('Meta Pixel ID not found. Add NEXT_PUBLIC_FACEBOOK_PIXEL_ID to your environment variables.');
-    return null;
-  }
+  return null;
+}
 
+export function FacebookPixel() {
   return (
     <>
       {/* Meta Pixel Script */}
@@ -59,7 +53,7 @@ export function FacebookPixel() {
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${pixelId}');
+            fbq('init', '${PIXEL_ID}');
             fbq('track', 'PageView');
           `,
         }}
@@ -71,10 +65,15 @@ export function FacebookPixel() {
           height="1"
           width="1"
           style={{ display: 'none' }}
-          src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
+          src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
           alt=""
         />
       </noscript>
+
+      {/* Wrap useSearchParams in Suspense for static export */}
+      <Suspense fallback={null}>
+        <PageViewTracker />
+      </Suspense>
     </>
   );
 }
