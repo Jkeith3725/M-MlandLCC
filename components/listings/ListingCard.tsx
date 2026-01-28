@@ -1,18 +1,38 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Listing } from '@/lib/types';
 import { formatPrice, formatAcreage } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { trackCustomEvent } from '@/lib/analytics';
 
 interface ListingCardProps {
   listing: Listing;
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
+  const handlePropertyClick = () => {
+    // Track when user clicks on a property card
+    trackCustomEvent('PropertyCardClick', {
+      property_id: listing.id,
+      property_title: listing.title,
+      property_price: listing.price,
+      property_acreage: listing.acreage,
+      property_county: listing.county,
+      property_state: listing.state,
+      property_slug: listing.slug,
+    });
+  };
+
   return (
     <article className="group relative bg-white overflow-hidden shadow-soft hover:shadow-strong transition-all duration-500 flex flex-col h-full cursor-pointer hover:-translate-y-1">
-      <Link href={`/listings/${listing.slug}`} className="absolute inset-0 z-10">
+      <Link 
+        href={`/listings/${listing.slug}`} 
+        className="absolute inset-0 z-10"
+        onClick={handlePropertyClick}
+      >
         <span className="sr-only">View {listing.title}</span>
       </Link>
 

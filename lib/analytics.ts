@@ -111,17 +111,23 @@ export function trackLead(
  * @param contentName - Name of the content being viewed
  * @param contentId - ID of the content
  * @param value - Optional value (e.g., property price)
+ * @param additionalData - Optional additional property data (acreage, county, state, etc.)
  * @param currency - Currency code (default: 'USD')
  * 
  * @example
  * ```typescript
- * trackViewContent('10 Acres in Athens County', 'listing-123', 50000);
+ * trackViewContent('10 Acres in Athens County', 'listing-123', 50000, {
+ *   acreage: 10,
+ *   county: 'Athens',
+ *   state: 'OH'
+ * });
  * ```
  */
 export function trackViewContent(
   contentName: string,
   contentId: string,
   value?: number,
+  additionalData?: Record<string, unknown>,
   currency: string = 'USD'
 ) {
   trackEvent('ViewContent', {
@@ -130,6 +136,7 @@ export function trackViewContent(
     content_type: 'product',
     value: value,
     currency: currency,
+    ...additionalData,
   });
 }
 

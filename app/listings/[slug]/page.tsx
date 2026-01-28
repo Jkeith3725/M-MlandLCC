@@ -103,6 +103,10 @@ export default async function ListingDetailPage({ params }: { params: { slug: st
         listingId={listing.id}
         listingTitle={listing.title}
         listingPrice={listing.price}
+        listingAcreage={listing.acreage}
+        listingCounty={listing.county}
+        listingState={listing.state}
+        listingSlug={listing.slug}
       />
 
       <div className="pt-28 pb-24">

@@ -4,9 +4,27 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { SellLandModal } from '@/components/forms/SellLandModal';
+import { trackCustomEvent } from '@/lib/analytics';
 
 export function Hero() {
   const [isSellModalOpen, setIsSellModalOpen] = useState(false);
+
+  const handleViewListingsClick = () => {
+    // Track when user clicks "View Listings" button
+    trackCustomEvent('ViewListingsClick', {
+      button_location: 'hero',
+      button_text: 'View Listings',
+    });
+  };
+
+  const handleSellYourLandClick = () => {
+    // Track when user clicks "Sell Your Land" button
+    trackCustomEvent('SellYourLandClick', {
+      button_location: 'hero',
+      button_text: 'Sell Your Land',
+    });
+    setIsSellModalOpen(true);
+  };
 
   return (
     <section
@@ -65,7 +83,7 @@ export function Hero() {
             role="group"
             aria-label="Call to action buttons"
           >
-            <Link href="/listings" className="w-full sm:w-auto">
+            <Link href="/listings" className="w-full sm:w-auto" onClick={handleViewListingsClick}>
               <Button
                 size="lg"
                 className="w-full sm:w-auto
@@ -87,7 +105,7 @@ export function Hero() {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => setIsSellModalOpen(true)}
+              onClick={handleSellYourLandClick}
               className="w-full sm:w-auto
                          bg-transparent
                          border border-cream/40
