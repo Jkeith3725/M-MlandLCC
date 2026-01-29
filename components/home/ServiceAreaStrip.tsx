@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/Button';
+import { COMPANY_INFO } from '@/lib/constants';
 
 export function ServiceAreaStrip() {
   return (
@@ -11,9 +12,11 @@ export function ServiceAreaStrip() {
           From the rolling hills of Southeast Ohio to the mountains of West Virginia, we represent the finest land in the region.
         </p>
         <div className="flex justify-center">
-          <Button variant="secondary" className="bg-brown-dark text-cream hover:bg-forest-900 border-transparent text-xs uppercase tracking-widest font-semibold px-8 py-3 rounded-none transition-all duration-300">
-            Contact Us Today
-          </Button>
+          <a href={`tel:${COMPANY_INFO.phone}`}>
+            <Button variant="secondary" className="bg-brown-dark text-cream hover:bg-forest-900 border-transparent text-xs uppercase tracking-widest font-semibold px-8 py-3 rounded-none transition-all duration-300">
+              Contact Us Today
+            </Button>
+          </a>
         </div>
       </div>
     </section>
